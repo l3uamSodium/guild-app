@@ -5,5 +5,5 @@
 -- Standard @@unique ทำไม่ได้เพราะ isOpen = false มีได้หลายแถว
 
 CREATE UNIQUE INDEX only_one_open_season
-  ON "GuildSeason" (is_open)
-  WHERE is_open = true;
+  ON "GuildSeason" ("isOpen")
+  WHERE "isOpen" = true;
