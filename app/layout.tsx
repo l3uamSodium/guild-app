@@ -1,19 +1,28 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Cinzel_Decorative, Noto_Sans_Thai } from "next/font/google";
+import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const inter = Inter({
+const cinzel = Cinzel_Decorative({
   subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  variable: "--font-cinzel",
+  display: "swap",
+});
+
+const notoSansThai = Noto_Sans_Thai({
+  subsets: ["latin", "thai"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-noto",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "⚔️ Guild Management",
-    template: "%s | Guild Management",
+    default: "ONIZUKA | Guild Management",
+    template: "%s | ONIZUKA",
   },
-  description:
-    "ระบบจัดการ Guild — ติดตาม Quest, War, คะแนน และสมาชิก ครบวงจร",
+  description: "ระบบจัดการ Guild ONIZUKA 鬼塚 — Quest, War, Shop, Lucky Draw",
 };
 
 export default function RootLayout({
@@ -22,9 +31,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className={`${inter.className} h-full`}>
-      <body className="min-h-full flex flex-col bg-[#0F0F14] text-[#E4E4F0] antialiased">
-        {children}
+    <html lang="th" className={`${cinzel.variable} ${notoSansThai.variable} h-full`}>
+      <body
+        className="min-h-full flex flex-col antialiased"
+        style={{
+          fontFamily: "var(--font-noto), sans-serif",
+          background: "#08080F",
+          color: "#E4E4F0",
+        }}
+      >
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

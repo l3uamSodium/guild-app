@@ -5,7 +5,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
-  // ─── Adapter ────────────────────────────────────────────────────────────────
   adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],
 
   // ─── Providers ──────────────────────────────────────────────────────────────
@@ -17,35 +16,28 @@ export const authOptions: NextAuthOptions = {
   ],
 
   // ─── Session Strategy ───────────────────────────────────────────────────────
-  // ใช้ JWT เพื่อให้ middleware (Edge Runtime) อ่าน token ได้โดยไม่ต้องแตะ DB
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
 
   // ─── Callbacks ──────────────────────────────────────────────────────────────
   callbacks: {
-    /**
-     * signIn — เก็บ discordId จาก account.providerAccountId ลงใน User
-     */
-    async signIn({ user, account }) {
-      if (account?.provider === "discord" && account.providerAccountId) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { discordId: account.providerAccountId },
-        });
-      }
-      return true;
-    },
-
-    /**
-     * jwt — encode memberId, memberStatus, role ลง JWT token
-     * ทำงานทุกครั้งที่ token ถูก create หรือ update
-     */
-    async jwt({ token, user }) {
-      // `user` มีค่าเฉพาะตอน sign-in ครั้งแรก
-      if (user) {
+    async jwt({ token, user, account }) {
+      if (user && account) {
         token.userId = user.id;
+
+        // Sync discordId ตอน sign-in ครั้งแรก
+        if (account.provider === "discord" && account.providerAccountId) {
+          try {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { discordId: account.providerAccountId },
+            });
+          } catch {
+            // ignore
+          }
+        }
 
         const member = await prisma.member.findUnique({
           where: { userId: user.id },
@@ -59,14 +51,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    /**
-     * session — map JWT token fields ลง session object
-     * ใช้ใน Server Components ผ่าน getServerSession()
-     */
     async session({ session, token }) {
-      session.user.id = token.userId as string;
-      session.user.memberId = (token.memberId as string | null) ?? null;
-      session.user.role = (token.role as string | null) ?? null;
+      session.user.id = (token.userId as string) ?? "";
+      session.user.memberId = null;
+      session.user.role = null;
       return session;
     },
   },
@@ -77,7 +65,6 @@ export const authOptions: NextAuthOptions = {
     error: "/",
   },
 
-  // ─── Secret ─────────────────────────────────────────────────────────────────
   secret: process.env.NEXTAUTH_SECRET,
 };
 

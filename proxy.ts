@@ -1,4 +1,4 @@
-// middleware.ts — Next.js Route Protection
+// proxy.ts — Next.js 16 Route Protection (previously middleware.ts)
 // ทำงาน Edge Runtime: ทุก request ผ่านที่นี่ก่อน
 
 import { withAuth } from "next-auth/middleware";
