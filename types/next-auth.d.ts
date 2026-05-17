@@ -1,15 +1,23 @@
 // types/next-auth.d.ts
-// Extend next-auth v4 Session type ให้มี role และ memberId
+// Extend next-auth v4 types ให้มี guild-specific fields
 
-import { Role } from "@/generated/prisma/client";
-import type { DefaultSession } from "next-auth";
+import type { DefaultSession, DefaultJWT } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
       memberId: string | null;
-      role: Role | null;
+      role: string | null;
     } & DefaultSession["user"];
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT extends DefaultJWT {
+    userId: string;
+    memberId: string | null;
+    memberStatus: string | null;
+    role: string | null;
   }
 }
