@@ -77,8 +77,9 @@ model Member {
   questLogs  QuestLog[]
   warLogs    WarLog[]
   leaveReqs  LeaveRequest[]
-  redeemLogs RedeemLog[]
-  auditLogs  AuditLog[]     @relation("AuditActor")
+  redeemLogs       RedeemLog[]
+  luckyDrawEntries LuckyDrawEntry[]
+  auditLogs        AuditLog[]       @relation("AuditActor")
 }
 
 enum Role {
@@ -182,18 +183,29 @@ enum LeaveStatus {
 
 // ─── Shop ─────────────────────────────────────────────────────────────────────
 
-model ShopItem {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  price       Int // points
-  stock       Int      @default(0)
-  imageUrl    String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+enum ShopItemType {
+  NORMAL      // ซื้อแล้วได้ของทันที หักแต้มทันที
+  LUCKY_DRAW  // จ่ายแต้มซื้อสิทธิ์ลุ้น สุ่ม 1 ชื่อเมื่อถึง drawClosesAt
+}
 
-  redeemLogs RedeemLog[]
+model ShopItem {
+  id           String       @id @default(cuid())
+  name         String
+  description  String?
+  type         ShopItemType @default(NORMAL)
+  price        Int          // points ต่อการซื้อ 1 ครั้ง
+  stock        Int          @default(0)
+  imageUrl     String?
+  isActive     Boolean      @default(true)
+  /// LUCKY_DRAW only — เวลาปิดรับสิทธิ์และสุ่มผู้ชนะ
+  drawClosesAt DateTime?
+  /// LUCKY_DRAW only — memberId ผู้ชนะ (set หลังสุ่ม)
+  drawWinnerId String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  redeemLogs       RedeemLog[]
+  luckyDrawEntries LuckyDrawEntry[]
 }
 
 model RedeemLog {
@@ -213,6 +225,19 @@ model RedeemLog {
 enum RedeemStatus {
   PENDING
   DELIVERED
+}
+
+// ─── Lucky Draw Entry ────────────────────────────────────────────────────────
+// ไม่มี @@unique — ซื้อสิทธิ์หลายครั้ง = โอกาสถูกสุ่มสูงขึ้น
+
+model LuckyDrawEntry {
+  id        String   @id @default(cuid())
+  memberId  String
+  itemId    String
+  createdAt DateTime @default(now())
+
+  member Member   @relation(fields: [memberId], references: [id])
+  item   ShopItem @relation(fields: [itemId], references: [id])
 }
 
 // ─── Season Snapshot ──────────────────────────────────────────────────────────
