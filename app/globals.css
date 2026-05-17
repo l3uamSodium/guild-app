@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
+/* ─── Design Tokens (Tailwind v4 @theme) ──────────────────────────────────── */
+@theme {
+  /* Custom colours from Sprint 0 spec */
+  --color-bg:          #0F0F14;
+  --color-surface:     #1A1A24;
+  --color-surface-2:   #22222F;
+  --color-primary:     #C084FC;   /* purple-400 ish */
+  --color-primary-hover: #A855F7;
+  --color-accent:      #F472B6;   /* pink-400 */
+  --color-accent-hover: #EC4899;
+
+  /* Text */
+  --color-text-base:   #E4E4F0;
+  --color-text-muted:  #8888A8;
+  --color-text-faint:  #4B4B6A;
+
+  /* Status */
+  --color-success:     #4ADE80;
+  --color-warning:     #FACC15;
+  --color-danger:      #F87171;
+  --color-info:        #60A5FA;
+
+  /* Border */
+  --color-border:      #2E2E40;
+  --color-border-focus: #C084FC;
+
+  /* Font */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ─── Base Styles ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-base);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-faint);
+}
+
+/* ─── Focus Ring ──────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
 }
