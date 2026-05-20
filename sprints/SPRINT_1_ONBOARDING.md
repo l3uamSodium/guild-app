@@ -4,8 +4,8 @@
 
 ## Tasks & Branches
 
-### `feat/onboarding-form` [IN PROGRESS]
-**Files:** `app/(public)/onboarding/page.tsx` (Basic info page created), `app/(public)/onboarding/actions.ts`
+### `feat/onboarding-form` [COMPLETED]
+**Files:** `app/(public)/onboarding/page.tsx`, `app/(public)/onboarding/actions.ts`
 
 **Prompt:**
 ```
@@ -23,8 +23,8 @@
 
 ---
 
-### `feat/pending-page`
-**Files:** `app/(auth)/pending/page.tsx`
+### `feat/pending-page` [COMPLETED]
+**Files:** `app/(public)/pending/page.tsx`
 
 **Prompt:**
 ```
@@ -39,7 +39,7 @@
 
 ---
 
-### `feat/admin-approve`
+### `feat/admin-approve` [COMPLETED]
 **Files:** `app/(admin)/members/page.tsx`, `app/(admin)/members/actions.ts`
 
 **Prompt:**
