@@ -395,23 +395,28 @@ body {
 
 /* ─── Input Base Styling ──────────────────────────────────── */
 
-.input-dark {
-  width: 100%;
-  padding: 0.625rem 1rem;
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  color: #E4E4F0;
-  font-size: 0.875rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  outline: none;
-}
+@layer components {
+  .input-dark {
+    width: 100%;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    color: #E4E4F0;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+  }
 
-.input-dark::placeholder {
-  color: #4B4B6A;
-}
+  .input-dark::placeholder {
+    color: #4B4B6A;
+  }
 
-.input-dark:focus {
-  border-color: rgba(192, 132, 252, 0.5);
-  box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.08);
+  .input-dark:focus {
+    border-color: rgba(192, 132, 252, 0.5);
+    box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.08);
+  }
 }
