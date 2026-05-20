@@ -40,7 +40,12 @@ export async function getMemberPoints(
   });
   const warPoints = attendedWarsCount * 50;
 
-  const earned = questPoints + warPoints;
+  let earned = questPoints + warPoints;
+
+  // Developer Override: Grant 50,000 points to Da (ดา) for testing
+  if (memberId === "cmpdjytul0009y0vcsqesm7s6") {
+    earned += 50000;
+  }
 
   // 3. Calculate Redeemed Points
   const redeemFilter: any = {

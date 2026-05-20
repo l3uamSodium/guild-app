@@ -97,7 +97,7 @@ export default function WatchlistClientPage({
               ONIZUKA WATCHLIST
             </h1>
             <p style={{ fontFamily: "var(--font-noto)", color: "#5B5B7A", fontSize: "14px", marginTop: "4px" }}>
-              ระบบเฝ้าระวังพฤติกรรมการขาดทำเควสต์และการลาสะสมของสมาชิกกิลด์
+              ระบบเฝ้าระวังพฤติกรรมการขาดทำเควสต์และการพักกิจกรรมสะสมของสมาชิกกิลด์
             </p>
           </div>
         </div>
@@ -114,35 +114,45 @@ export default function WatchlistClientPage({
           <a
             href="/members"
             className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
-            style={{ fontFamily: "var(--font-noto)" }}
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
           >
             จัดการสมาชิก
           </a>
           <a
             href="/seasons"
             className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
-            style={{ fontFamily: "var(--font-noto)" }}
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
           >
             จัดการซีซัน
           </a>
           <a
             href="/admin/leave"
             className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
-            style={{ fontFamily: "var(--font-noto)" }}
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
           >
-            อนุมัติการลา
+            อนุมัติการพักกิจกรรม
           </a>
           <a
             href="/quest-check"
             className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
-            style={{ fontFamily: "var(--font-noto)" }}
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
           >
             ตรวจเควสต์รายวัน
           </a>
           <a
             href="/admin/war-log"
             className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
-            style={{ fontFamily: "var(--font-noto)" }}
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
           >
             บันทึกกิลด์วอร์
           </a>
@@ -157,6 +167,15 @@ export default function WatchlistClientPage({
             }}
           >
             รายชื่อเฝ้าระวัง
+          </a>
+          <a
+            href="/admin/shop"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการร้านค้า
           </a>
         </div>
 
@@ -284,10 +303,10 @@ export default function WatchlistClientPage({
                   letterSpacing: "0.05em",
                 }}
               >
-                สถิติการลาเยอะ (ซีซันนี้)
+                สถิติการพักกิจกรรมเยอะ (ซีซันนี้)
               </h2>
               <span className="text-xs text-slate-500 font-mono">
-                จัดอันดับการลาที่ได้รับอนุมัติสูงสุด
+                จัดอันดับการพักกิจกรรมที่ได้รับอนุมัติสูงสุด
               </span>
             </div>
 
@@ -315,10 +334,10 @@ export default function WatchlistClientPage({
                     </svg>
                   </div>
                   <h3 style={{ fontFamily: "var(--font-cinzel)", color: "#FFFFFF", fontSize: "14px", fontWeight: "bold" }}>
-                    NO LEAVE DATA
+                    NO ACTIVITY REST DATA
                   </h3>
                   <p style={{ fontFamily: "var(--font-noto)", color: "#5B5B7A", fontSize: "13px" }}>
-                    ไม่มีประวัติการส่งคำขอลาที่ได้รับอนุมัติในซีซันนี้
+                    ไม่มีประวัติการแจ้งขอพักกิจกรรมที่ได้รับอนุมัติในซีซันนี้
                   </p>
                 </div>
               ) : (
@@ -366,7 +385,7 @@ export default function WatchlistClientPage({
                           </div>
 
                           <div className="font-mono text-amber-400 font-bold text-sm">
-                            ลาสะสม {item.leaveCount} วัน
+                            พักกิจกรรมสะสม {item.leaveCount} วัน
                           </div>
                         </div>
 

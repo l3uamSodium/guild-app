@@ -6,6 +6,7 @@ import { getMemberPoints } from "@/lib/points";
 import { getLeaderboard } from "@/lib/leaderboard";
 import MemberNavbar from "@/components/features/MemberNavbar";
 import QuestCalendar from "@/components/features/QuestCalendar";
+import DiscordTestButton from "@/components/features/DiscordTestButton";
 
 export const metadata = {
   title: "แดชบอร์ดสมาชิก - ONIZUKA",
@@ -41,7 +42,7 @@ export default async function MemberDashboardPage() {
   // 3. Fetch Active Season
   const currentSeason = await getCurrentSeason();
 
-  // 4. Fetch Dynamic Point Balance (All-time dynamic calculation)
+  // 4. Fetch Dynamic Point Balance
   const points = await getMemberPoints(memberId, currentSeason?.id);
 
   // 5. Fetch Daily Quest Logs & War Logs in Current Season
@@ -78,7 +79,7 @@ export default async function MemberDashboardPage() {
     });
   }
 
-  // 6. Fetch Recent Redemptions
+  // 6. Fetch ALL Redemptions (not just 5)
   const recentRedeems = await prisma.redeemLog.findMany({
     where: { memberId },
     include: {
@@ -92,25 +93,22 @@ export default async function MemberDashboardPage() {
     orderBy: {
       redeemedAt: "desc",
     },
-    take: 5,
+    take: 20,
   });
 
   // 7. Calculate Statistics
-  // Quest rate
   const doneQuests = questLogs.filter((q) => q.status === "DONE").length;
   const absentQuests = questLogs.filter((q) => q.status === "ABSENT").length;
   const totalQuests = doneQuests + absentQuests;
   const questSuccessRate =
     totalQuests > 0 ? Math.round((doneQuests / totalQuests) * 100) : 100;
 
-  // War rate
   const attendedWars = warLogs.filter((w) => w.status === "ATTENDED").length;
   const missedWars = warLogs.filter((w) => w.status === "MISSED").length;
   const totalWars = attendedWars + missedWars;
   const warAttendanceRate =
     totalWars > 0 ? Math.round((attendedWars / totalWars) * 100) : 100;
 
-  // Leaves
   const approvedLeaves = leaveRequests.filter((l) => l.status === "APPROVED").length;
 
   // 8. Fetch Leaderboard Rank
@@ -129,86 +127,121 @@ export default async function MemberDashboardPage() {
     day: "numeric",
   });
 
+  // Serialise for client boundary
+  const serialisedLeaveRequests = leaveRequests.map((l) => ({
+    id: l.id,
+    date: l.date.toISOString ? l.date.toISOString() : String(l.date),
+    reason: l.reason,
+    status: l.status,
+    createdAt: l.createdAt?.toISOString ? l.createdAt.toISOString() : "",
+  }));
+
+  const serialisedRedeems = recentRedeems.map((r) => ({
+    id: r.id,
+    itemName: r.item.name,
+    pointsSpent: r.pointsSpent,
+    status: r.status,
+    redeemedAt: r.redeemedAt.toISOString(),
+  }));
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#08080F" }}>
-      {/* Shared Navigation Navbar */}
+      {/* Fixed background layers */}
+      <div className="page-bg" />
+      <div className="page-dot-grid" />
+
+      {/* Navbar */}
       <MemberNavbar
         avatarUrl={member.user?.image}
         inGameName={member.inGameName}
         role={member.role}
       />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 py-8 space-y-8 relative z-10">
-        {/* Background ambient glows */}
-        <div
-          className="absolute top-1/4 left-1/4 -translate-x-1/2 w-[350px] h-[350px] opacity-[0.03] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(#FF2D78, transparent 70%)" }}
-        />
-        <div
-          className="absolute top-1/2 right-1/4 translate-x-1/2 w-[400px] h-[400px] opacity-[0.03] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(#8B5CF6, transparent 70%)" }}
-        />
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 py-8 space-y-6 relative z-10">
 
-        {/* Welcome Banner Card */}
+        {/* ── Welcome Banner ─────────────────────────────────── */}
         <div
-          className="relative p-6 sm:p-8 rounded-3xl border overflow-hidden"
+          className="relative p-6 sm:p-8 rounded-2xl border overflow-hidden"
           style={{
-            background: "rgba(10, 10, 18, 0.4)",
-            borderColor: "rgba(255, 45, 120, 0.1)",
+            background: "rgba(10, 10, 20, 0.6)",
+            borderColor: "rgba(255, 255, 255, 0.06)",
+            backdropFilter: "blur(24px)",
           }}
         >
+          {/* Pink top accent */}
+          <div
+            className="absolute top-0 left-0 right-0 h-[1px]"
+            style={{
+              background: "linear-gradient(90deg, transparent 0%, rgba(255,45,120,0.6) 40%, rgba(192,132,252,0.4) 70%, transparent 100%)",
+            }}
+          />
+
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
+            <div className="space-y-2 min-w-0">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <span
-                  className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border"
+                  className="px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-widest uppercase border"
                   style={{
                     background:
                       member.memberType === "WAR"
-                        ? "rgba(239, 68, 68, 0.15)"
-                        : "rgba(16, 185, 129, 0.15)",
+                        ? "rgba(239, 68, 68, 0.1)"
+                        : "rgba(16, 185, 129, 0.1)",
                     borderColor:
                       member.memberType === "WAR"
-                        ? "rgba(239, 68, 68, 0.4)"
-                        : "rgba(16, 185, 129, 0.4)",
+                        ? "rgba(239, 68, 68, 0.3)"
+                        : "rgba(16, 185, 129, 0.3)",
                     color: member.memberType === "WAR" ? "#F87171" : "#34D399",
                     fontFamily: "var(--font-noto)",
                   }}
                 >
-                  {member.memberType === "WAR" ? "สายวอร์ (WAR)" : "สมาชิกปกติ (NORMAL)"}
+                  {member.memberType === "WAR" ? "สายวอร์" : "สมาชิกปกติ"}
                 </span>
 
-                <span className="text-xs text-slate-500 font-mono">
-                  เข้าร่วมกิลด์เมื่อ {joinDate}
+                <span className="text-[11px] text-slate-600 font-mono">
+                  เข้าร่วม {joinDate}
                 </span>
               </div>
 
               <h1
-                className="text-2xl sm:text-3xl font-extrabold text-slate-100"
+                className="text-2xl sm:text-3xl font-extrabold text-slate-100 truncate"
                 style={{ fontFamily: "var(--font-noto)" }}
               >
-                ยินดีต้อนรับกลับมา, {member.inGameName}
+                {member.inGameName}
               </h1>
 
-              <p className="text-sm text-slate-400" style={{ fontFamily: "var(--font-noto)" }}>
-                ฉายา/ชื่อเล่น: <span className="text-pink-400 font-bold">{member.nickname}</span> | ตำแหน่งในกิลด์:{" "}
-                <span className="text-purple-400 font-bold font-mono">{member.role}</span>
+              <p className="text-sm text-slate-500" style={{ fontFamily: "var(--font-noto)" }}>
+                ชื่อเล่น:{" "}
+                <span
+                  style={{
+                    background: "linear-gradient(90deg, #FF6B9D, #C084FC)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    fontWeight: 700,
+                  }}
+                >
+                  {member.nickname}
+                </span>
+                {" "}·{" "}
+                <span className="text-purple-400 font-mono">{member.role}</span>
               </p>
             </div>
 
-            {/* Current Rank Badge */}
+            {/* Rank Badge */}
             <div
-              className="px-6 py-4 rounded-2xl border flex flex-col items-center justify-center min-w-[140px]"
+              className="flex-shrink-0 px-7 py-5 rounded-2xl border flex flex-col items-center justify-center"
               style={{
-                background: "rgba(255, 255, 255, 0.01)",
-                borderColor: "rgba(255, 255, 255, 0.05)",
+                background: "rgba(255,255,255,0.02)",
+                borderColor: "rgba(255,255,255,0.06)",
+                minWidth: "130px",
               }}
             >
-              <span className="text-xs text-slate-500 uppercase tracking-wider">อันดับของฉัน</span>
+              <span className="text-[10px] text-slate-600 uppercase tracking-widest mb-1">อันดับ</span>
               <span
-                className="text-3xl font-black font-mono mt-1 text-transparent bg-clip-text"
+                className="text-3xl font-black font-mono"
                 style={{
-                  backgroundImage: "linear-gradient(135deg, #FFFFFF, #C084FC)",
+                  background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
                 }}
               >
                 {rank}
@@ -217,86 +250,69 @@ export default async function MemberDashboardPage() {
           </div>
         </div>
 
-        {/* Member Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Stat 1: Total Points */}
-          <div
-            className="p-5 rounded-2xl border"
-            style={{
-              background: "rgba(10, 10, 18, 0.3)",
-              borderColor: "rgba(255, 255, 255, 0.04)",
-            }}
-          >
-            <div className="text-xs text-slate-500" style={{ fontFamily: "var(--font-noto)" }}>
-              แต้มกิลด์ที่เหลือ
-            </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-cyan-400 mt-2">
-              {points.total.toLocaleString()} <span className="text-xs text-slate-500">Pts</span>
-            </div>
-            <div className="text-[10px] text-slate-500 mt-1 font-mono">
-              สะสมทั้งหมด: {points.earned.toLocaleString()} Pts
-            </div>
-          </div>
+        {/* ── Stats Grid ──────────────────────────────────────── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {/* Points */}
+          <StatCard
+            label="แต้มคงเหลือ"
+            value={points.total.toLocaleString()}
+            unit="Pts"
+            sub={`สะสมทั้งหมด ${points.earned.toLocaleString()} Pts`}
+            accentColor="#06B6D4"
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            }
+          />
 
-          {/* Stat 2: Quest Rate */}
-          <div
-            className="p-5 rounded-2xl border"
-            style={{
-              background: "rgba(10, 10, 18, 0.3)",
-              borderColor: "rgba(255, 255, 255, 0.04)",
-            }}
-          >
-            <div className="text-xs text-slate-500" style={{ fontFamily: "var(--font-noto)" }}>
-              อัตราส่งเควสต์
-            </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-400 mt-2">
-              {questSuccessRate}%
-            </div>
-            <div className="text-[10px] text-slate-500 mt-1" style={{ fontFamily: "var(--font-noto)" }}>
-              ทำเควสต์สำเร็จ {doneQuests} ครั้ง
-            </div>
-          </div>
+          {/* Quest rate */}
+          <StatCard
+            label="อัตราส่งเควสต์"
+            value={`${questSuccessRate}%`}
+            unit=""
+            sub={`สำเร็จ ${doneQuests} ครั้ง`}
+            accentColor="#10B981"
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            }
+          />
 
-          {/* Stat 3: War Attendance */}
-          <div
-            className="p-5 rounded-2xl border"
-            style={{
-              background: "rgba(10, 10, 18, 0.3)",
-              borderColor: "rgba(255, 255, 255, 0.04)",
-            }}
-          >
-            <div className="text-xs text-slate-500" style={{ fontFamily: "var(--font-noto)" }}>
-              การเข้าร่วมกิลด์วอร์
-            </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-purple-400 mt-2">
-              {warAttendanceRate}%
-            </div>
-            <div className="text-[10px] text-slate-500 mt-1" style={{ fontFamily: "var(--font-noto)" }}>
-              เข้าร่วม {attendedWars} ครั้ง
-            </div>
-          </div>
+          {/* War attendance */}
+          <StatCard
+            label="เข้าร่วมวอร์"
+            value={`${warAttendanceRate}%`}
+            unit=""
+            sub={`เข้าร่วม ${attendedWars} ครั้ง`}
+            accentColor="#8B5CF6"
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+              </svg>
+            }
+          />
 
-          {/* Stat 4: Approved Leaves */}
-          <div
-            className="p-5 rounded-2xl border"
-            style={{
-              background: "rgba(10, 10, 18, 0.3)",
-              borderColor: "rgba(255, 255, 255, 0.04)",
-            }}
-          >
-            <div className="text-xs text-slate-500" style={{ fontFamily: "var(--font-noto)" }}>
-              การขอพักรบในซีซัน
-            </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-amber-400 mt-2">
-              {approvedLeaves} <span className="text-xs text-slate-500">วัน</span>
-            </div>
-            <div className="text-[10px] text-slate-500 mt-1" style={{ fontFamily: "var(--font-noto)" }}>
-              ได้รับการอนุมัติพักกิจกรรม
-            </div>
-          </div>
+          {/* Leaves */}
+          <StatCard
+            label="พักกิจกรรม"
+            value={approvedLeaves.toString()}
+            unit="วัน"
+            sub="ได้รับอนุมัติในซีซัน"
+            accentColor="#FACC15"
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+              </svg>
+            }
+          />
         </div>
 
-        {/* GitHub style Daily Quest Calendar */}
+        {/* ── Discord Test ─────────────────────────────────────── */}
+        <DiscordTestButton />
+
+        {/* ── Quest Calendar ───────────────────────────────────── */}
         {currentSeason ? (
           <QuestCalendar
             monthYear={currentSeason.monthYear}
@@ -305,7 +321,7 @@ export default async function MemberDashboardPage() {
           />
         ) : (
           <div
-            className="p-10 text-center rounded-3xl border text-slate-500 text-sm"
+            className="p-10 text-center rounded-2xl border text-slate-500 text-sm"
             style={{
               background: "rgba(10, 10, 18, 0.4)",
               borderColor: "rgba(255, 255, 255, 0.05)",
@@ -316,171 +332,59 @@ export default async function MemberDashboardPage() {
           </div>
         )}
 
-        {/* Two Columns for History Logs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Column A: Recent Leave Logs */}
-          <div
-            className="p-6 rounded-3xl border flex flex-col"
-            style={{
-              background: "rgba(10, 10, 18, 0.4)",
-              borderColor: "rgba(255, 255, 255, 0.05)",
-            }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3
-                className="text-sm font-bold text-slate-300"
-                style={{ fontFamily: "var(--font-noto)" }}
-              >
-                ประวัติการขอพักรบกิลด์ ล่าสุด
-              </h3>
-              <span className="text-xs text-slate-500 font-mono">ยื่นขอพักกิจกรรมกิลด์</span>
-            </div>
-
-            <div className="flex-1 space-y-3">
-              {leaveRequests.length === 0 ? (
-                <div
-                  className="py-12 text-center text-slate-500 text-xs"
-                  style={{ fontFamily: "var(--font-noto)" }}
-                >
-                  ไม่มีข้อมูลประวัติการพักกิจกรรมกิลด์ในซีซันนี้
-                </div>
-              ) : (
-                leaveRequests
-                  .slice()
-                  .reverse()
-                  .slice(0, 5)
-                  .map((req) => {
-                    const formattedDate = new Date(req.date).toLocaleDateString("th-TH", {
-                      day: "numeric",
-                      month: "short",
-                    });
-
-                    let badgeColor = "#64748B";
-                    let badgeBg = "rgba(100,116,139,0.1)";
-                    let statusLabel = "กำลังตรวจสอบ";
-
-                    if (req.status === "APPROVED") {
-                      badgeColor = "#10B981";
-                      badgeBg = "rgba(16,185,129,0.1)";
-                      statusLabel = "อนุมัติพักรบ";
-                    } else if (req.status === "REJECTED") {
-                      badgeColor = "#EF4444";
-                      badgeBg = "rgba(239,68,68,0.1)";
-                      statusLabel = "ปฏิเสธ";
-                    }
-
-                    return (
-                      <div
-                        key={req.id}
-                        className="p-3.5 rounded-xl border flex items-center justify-between gap-4 transition-all duration-200 hover:bg-white/[0.01]"
-                        style={{
-                          background: "rgba(255,255,255,0.01)",
-                          borderColor: "rgba(255,255,255,0.03)",
-                        }}
-                      >
-                        <div className="space-y-1">
-                          <div className="text-xs text-slate-400 font-semibold">
-                            ขอหยุดวันที่ {formattedDate}
-                          </div>
-                          <div
-                            className="text-xs text-slate-500 line-clamp-1"
-                            style={{ fontFamily: "var(--font-noto)" }}
-                          >
-                            เหตุผล: {req.reason}
-                          </div>
-                        </div>
-
-                        <span
-                          className="px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wider"
-                          style={{
-                            color: badgeColor,
-                            background: badgeBg,
-                            border: `1px solid ${badgeColor}22`,
-                            fontFamily: "var(--font-noto)",
-                          }}
-                        >
-                          {statusLabel}
-                        </span>
-                      </div>
-                    );
-                  })
-              )}
-            </div>
-          </div>
-
-          {/* Column B: Recent Shop Redemptions */}
-          <div
-            className="p-6 rounded-3xl border flex flex-col"
-            style={{
-              background: "rgba(10, 10, 18, 0.4)",
-              borderColor: "rgba(255, 255, 255, 0.05)",
-            }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3
-                className="text-sm font-bold text-slate-300"
-                style={{ fontFamily: "var(--font-noto)" }}
-              >
-                ประวัติการแลกของรางวัล ล่าสุด
-              </h3>
-              <span className="text-xs text-slate-500 font-mono">แลกด้วยแต้มสะสม</span>
-            </div>
-
-            <div className="flex-1 space-y-3">
-              {recentRedeems.length === 0 ? (
-                <div
-                  className="py-12 text-center text-slate-500 text-xs"
-                  style={{ fontFamily: "var(--font-noto)" }}
-                >
-                  ไม่มีข้อมูลประวัติการแลกของรางวัลใด ๆ
-                </div>
-              ) : (
-                recentRedeems.map((log) => {
-                  const redeemDate = new Date(log.redeemedAt).toLocaleDateString("th-TH", {
-                    day: "numeric",
-                    month: "short",
-                  });
-
-                  let badgeColor = "#E2E8F0";
-                  let statusText = "รอจัดส่ง";
-
-                  if (log.status === "DELIVERED") {
-                    badgeColor = "#10B981";
-                    statusText = "จัดส่งแล้ว";
-                  }
-
-                  return (
-                    <div
-                      key={log.id}
-                      className="p-3.5 rounded-xl border flex items-center justify-between gap-4 transition-all duration-200 hover:bg-white/[0.01]"
-                      style={{
-                        background: "rgba(255,255,255,0.01)",
-                        borderColor: "rgba(255,255,255,0.03)",
-                      }}
-                    >
-                      <div className="space-y-1">
-                        <div className="text-xs text-slate-300 font-semibold">
-                          {log.item.name}
-                        </div>
-                        <div className="text-[10px] text-slate-500 font-mono">
-                          แลกเมื่อ {redeemDate} | ใช้ไป {log.pointsSpent.toLocaleString()} Pts
-                        </div>
-                      </div>
-
-                      <span
-                        className="text-[10px] font-bold"
-                        style={{ color: badgeColor, fontFamily: "var(--font-noto)" }}
-                      >
-                        {statusText}
-                      </span>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-        </div>
+        {/* ── History Panels ───────────────────────────────────── */}
+        <HistoryPanels
+          leaveRequests={serialisedLeaveRequests}
+          recentRedeems={serialisedRedeems}
+        />
       </main>
     </div>
   );
 }
+
+/* ──────────────────────────────────────────────────────────────────────────── */
+/*  Sub-components rendered server-side but kept in same file for simplicity   */
+/* ──────────────────────────────────────────────────────────────────────────── */
+
+function StatCard({
+  label,
+  value,
+  unit,
+  sub,
+  accentColor,
+  icon,
+}: {
+  label: string;
+  value: string;
+  unit: string;
+  sub: string;
+  accentColor: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <div
+      className="stat-card"
+      style={{ "--accent" : accentColor } as React.CSSProperties}
+    >
+      {/* Icon row */}
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10px] uppercase tracking-widest font-semibold text-slate-500" style={{ fontFamily: "var(--font-noto)" }}>
+          {label}
+        </span>
+        <span style={{ color: accentColor, opacity: 0.7 }}>{icon}</span>
+      </div>
+
+      {/* Value */}
+      <div className="font-mono font-extrabold text-xl sm:text-2xl" style={{ color: accentColor }}>
+        {value}
+        {unit && <span className="text-xs font-normal text-slate-500 ml-1">{unit}</span>}
+      </div>
+
+      {/* Sub label */}
+      <div className="text-[10px] text-slate-600 mt-1 font-mono">{sub}</div>
+    </div>
+  );
+}
+
+/* History panels — client-rendered to support "View All" modal */
+import HistoryPanels from "./HistoryPanels";

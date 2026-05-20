@@ -287,7 +287,7 @@ export default function WarLogClientPage({
             className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
             style={{ fontFamily: "var(--font-noto)" }}
           >
-            อนุมัติการลา
+            อนุมัติการพักกิจกรรม
           </a>
           <a
             href="/quest-check"
@@ -314,6 +314,15 @@ export default function WarLogClientPage({
             style={{ fontFamily: "var(--font-noto)" }}
           >
             รายชื่อเฝ้าระวัง
+          </a>
+          <a
+            href="/admin/shop"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการร้านค้า
           </a>
         </div>
 

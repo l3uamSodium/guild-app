@@ -95,7 +95,7 @@ export default function QuestCheckClientPage({
         setScreenshotFile(null);
       }
     } else {
-      // ถ้ายังไม่มีประวัติบันทึก ให้เซตเริ่มต้นเป็นว่าง (ยกเว้นคนลา)
+      // ถ้ายังไม่มีประวัติบันทึก ให้เซตเริ่มต้นเป็นว่าง (ยกเว้นคนพักกิจกรรม)
       setCompletedIds([]);
       setScreenshotPreview(null);
       setScreenshotFile(null);
@@ -141,7 +141,7 @@ export default function QuestCheckClientPage({
   // การจัดการตารางเช็คลิสต์
   const toggleMemberChecked = (memberId: string) => {
     const leaveIds = getLeavesForSelectedDate();
-    if (leaveIds.includes(memberId)) return; // คนลาห้ามแก้ไข
+    if (leaveIds.includes(memberId)) return; // คนพักกิจกรรมห้ามแก้ไข
 
     setCompletedIds((prev) =>
       prev.includes(memberId)
@@ -193,7 +193,7 @@ export default function QuestCheckClientPage({
 
     if (
       confirm(
-        `คุณต้องการทำรายการ "ปรับขาดส่งอัตโนมัติ" ใช่หรือไม่?\nสมาชิกทั้งหมดที่ไม่มีชื่อส่งเควสและไม่มีใบลาจะถูกปรับเป็นขาดส่ง (Absent)`
+        `คุณต้องการทำรายการ "ปรับขาดส่งอัตโนมัติ" ใช่หรือไม่?\nสมาชิกทั้งหมดที่ไม่มีชื่อส่งเควสและไม่มีคำขอพักกิจกรรมจะถูกปรับเป็นขาดส่ง (Absent)`
       )
     ) {
       startTransition(async () => {
@@ -201,7 +201,7 @@ export default function QuestCheckClientPage({
           const result = await bulkAbsent(selectedDate, activeSeason.id);
           showNotification(
             "success",
-            `ปรับขาดส่งสำเร็จ! ปรับเป็น Absent: ${result.created} คน (ข้ามแล้ว: ${result.skipped} คน, ลากิจ: ${result.excluded} คน)`
+            `ปรับขาดส่งสำเร็จ! ปรับเป็น Absent: ${result.created} คน (ข้ามแล้ว: ${result.skipped} คน, พักกิจกรรม: ${result.excluded} คน)`
           );
           
           // โหลดข้อมูลเควสใหม่หลังทำ bulk
@@ -312,32 +312,83 @@ export default function QuestCheckClientPage({
               แดชบอร์ดตรวจสอบเควสรายวันและอัปโหลดภาพหลักฐานการทำกิจกรรม
             </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 hover:brightness-110 flex items-center gap-2"
-              style={{
-                background: "rgba(255,255,255,0.02)",
-                borderColor: "rgba(228,228,240,0.15)",
-                color: "#E4E4F0",
-              }}
-            >
-              แดชบอร์ด
-            </Link>
-
-            <Link
-              href="/leave"
-              className="px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 hover:brightness-110 flex items-center gap-2"
-              style={{
-                background: "rgba(244, 114, 182, 0.1)",
-                borderColor: "rgba(244, 114, 182, 0.25)",
-                color: "#F472B6",
-              }}
-            >
-              ใบลาหยุดทั้งหมด
-            </Link>
-          </div>
+        {/* Admin Navigation Command Bar */}
+        <div
+          className="flex flex-wrap gap-2 p-2 rounded-2xl border"
+          style={{
+            background: "rgba(255,255,255,0.01)",
+            borderColor: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <a
+            href="/members"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการสมาชิก
+          </a>
+          <a
+            href="/seasons"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการซีซัน
+          </a>
+          <a
+            href="/admin/leave"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            อนุมัติการพักกิจกรรม
+          </a>
+          <a
+            href="/quest-check"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+            style={{
+              fontFamily: "var(--font-noto)",
+              background: "rgba(255,45,120,0.15)",
+              border: "1px solid rgba(255,45,120,0.4)",
+              color: "#FF6B9D",
+            }}
+          >
+            ตรวจเควสต์รายวัน
+          </a>
+          <a
+            href="/admin/war-log"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            บันทึกกิลด์วอร์
+          </a>
+          <a
+            href="/admin/watchlist"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            รายชื่อเฝ้าระวัง
+          </a>
+          <a
+            href="/admin/shop"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการร้านค้า
+          </a>
         </div>
 
         {/* Setup Check (if no season active) */}
@@ -496,7 +547,7 @@ export default function QuestCheckClientPage({
                     <p className="text-lg font-black text-white">{absentCount}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10">
-                    <p className="text-[10px] text-amber-400 uppercase">ลากิจ</p>
+                    <p className="text-[10px] text-amber-400 uppercase">พักกิจกรรม</p>
                     <p className="text-lg font-black text-white">{leaveCount}</p>
                   </div>
                 </div>
@@ -624,7 +675,7 @@ export default function QuestCheckClientPage({
                             <td className="px-6 py-4">
                               {isLeave ? (
                                 <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/25 text-amber-400">
-                                  ลากิจ (Leave)
+                                  พักกิจกรรม (Leave)
                                 </span>
                               ) : isDone ? (
                                 <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/25 text-emerald-400">

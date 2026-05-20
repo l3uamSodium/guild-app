@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole, getSession } from "@/lib/rbac";
 import { getCurrentSeason } from "@/lib/season";
 import { revalidatePath } from "next/cache";
+import { sendDM } from "@/lib/discord-notify";
 
 /**
  * สมาชิกส่งใบลา (สร้าง LeaveRequest)
@@ -80,13 +81,20 @@ export async function reviewLeaveRequest(leaveId: string, status: "APPROVED" | "
     throw new Error("BAD_REQUEST: สถานะการอนุมัติไม่ถูกต้อง");
   }
 
-  // 2. ดึงใบลา
+  // 2. ดึงใบลาพร้อมกับข้อมูลผู้ใช้และ Discord ID
   const leave = await prisma.leaveRequest.findUnique({
     where: { id: leaveId },
+    include: {
+      member: {
+        include: {
+          user: true,
+        },
+      },
+    },
   });
 
   if (!leave) {
-    throw new Error("NOT_FOUND: ไม่พบรายการใบลาที่ต้องการตรวจสอบ");
+    throw new Error("NOT_FOUND: ไม่พบรายการคำขอพักกิจกรรมที่ต้องการตรวจสอบ");
   }
 
   // 3. อัปเดตใน Transaction พร้อมสร้าง AuditLog
@@ -113,6 +121,24 @@ export async function reviewLeaveRequest(leaveId: string, status: "APPROVED" | "
 
     return updated;
   });
+
+  // 4. ส่งข้อความแจ้งเตือนผ่าน Discord DM (ทำงานเบื้องหลัง/ไม่ขัดขวางหากล้มเหลว)
+  const discordId = leave.member?.user?.discordId;
+  if (discordId) {
+    const nickname = leave.member.nickname || leave.member.inGameName;
+    const leaveDate = new Date(leave.date).toLocaleDateString("th-TH", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    const message = status === "APPROVED"
+      ? `สวัสดีคุณ **${nickname}**,\n\nการขอพักกิจกรรมกิลด์ของคุณสำหรับวันที่ **${leaveDate}** ได้รับการอนุมัติแล้วเรียบร้อยครับ ⚔️`
+      : `สวัสดีคุณ **${nickname}**,\n\nคำขอพักกิจกรรมกิลด์ของคุณสำหรับวันที่ **${leaveDate}** ไม่ได้รับการอนุมัติในรอบนี้ครับ ⚠️`;
+
+    // เรียกส่งข้อความโดยใช้ sendDM
+    await sendDM(discordId, message, status);
+  }
 
   revalidatePath("/leave");
   revalidatePath("/quest-check"); // จะต้องใช้ข้อมูลใบลาอัปเดตสถานะ

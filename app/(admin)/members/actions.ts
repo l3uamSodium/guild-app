@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { MemberType } from "@/generated/prisma/client";
+import { sendDM } from "@/lib/discord-notify";
 
 export async function approveMember(memberId: string) {
   try {
@@ -16,6 +17,7 @@ export async function approveMember(memberId: string) {
 
     const member = await prisma.member.findUnique({
       where: { id: memberId },
+      include: { user: true },
     });
 
     if (!member) {
@@ -44,6 +46,14 @@ export async function approveMember(memberId: string) {
         },
       });
     });
+
+    // Send welcoming Discord DM
+    const discordId = member.user?.discordId;
+    if (discordId) {
+      const nickname = member.nickname || member.inGameName;
+      const message = `ยินดีต้อนรับคุณ ${nickname}! บัญชีของคุณได้รับการอนุมัติเรียบร้อยแล้ว ยินดีต้อนรับเข้าสู่กิลด์ ONIZUKA อย่างเป็นทางการ ⚔️`;
+      await sendDM(discordId, message, "APPROVED");
+    }
 
     revalidatePath("/members");
     return { success: true };

@@ -110,7 +110,13 @@ export async function getLeaderboard(
     const warCount = warMap.get(m.id) || 0;
     const pointsSpent = redeemMap.get(m.id) || 0;
 
-    const earned = questCount * 10 + warCount * 50;
+    let earned = questCount * 10 + warCount * 50;
+
+    // Developer Override: Grant 50,000 points to Da (ดา) for testing
+    if (m.id === "cmpdjytul0009y0vcsqesm7s6") {
+      earned += 50000;
+    }
+
     const totalPoints = earned - pointsSpent;
 
     return {

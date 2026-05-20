@@ -2,14 +2,14 @@
 
 /* ─── Design Tokens (Tailwind v4 @theme) ──────────────────────────────────── */
 @theme {
-  /* Custom colours from Sprint 0 spec */
-  --color-bg:          #0F0F14;
-  --color-surface:     #1A1A24;
-  --color-surface-2:   #22222F;
-  --color-primary:     #C084FC;   /* purple-400 ish */
+  --color-bg:          #08080F;
+  --color-surface:     #0F0F1A;
+  --color-surface-2:   #16162A;
+  --color-primary:     #C084FC;
   --color-primary-hover: #A855F7;
-  --color-accent:      #F472B6;   /* pink-400 */
-  --color-accent-hover: #EC4899;
+  --color-accent:      #FF2D78;
+  --color-accent-soft: #FF6B9D;
+  --color-accent-hover: #E5185F;
 
   /* Text */
   --color-text-base:   #E4E4F0;
@@ -17,17 +17,15 @@
   --color-text-faint:  #4B4B6A;
 
   /* Status */
-  --color-success:     #4ADE80;
+  --color-success:     #10B981;
   --color-warning:     #FACC15;
-  --color-danger:      #F87171;
-  --color-info:        #60A5FA;
+  --color-danger:      #EF4444;
+  --color-info:        #06B6D4;
 
   /* Border */
-  --color-border:      #2E2E40;
+  --color-border:      #1E1E2E;
+  --color-border-muted: rgba(255,255,255,0.06);
   --color-border-focus: #C084FC;
-
-  /* Font */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ─── Base Styles ─────────────────────────────────────────── */
@@ -39,29 +37,381 @@ html,
 body {
   background-color: var(--color-bg);
   color: var(--color-text-base);
-  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* ─── Scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-surface);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
+  background: rgba(255, 45, 120, 0.25);
+  border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-faint);
+  background: rgba(255, 45, 120, 0.5);
 }
 
 /* ─── Focus Ring ──────────────────────────────────────────── */
 *:focus-visible {
-  outline: 2px solid var(--color-border-focus);
+  outline: 2px solid rgba(192, 132, 252, 0.6);
   outline-offset: 2px;
+}
+
+/* ─── Keyframes ───────────────────────────────────────────── */
+
+/* Gradient border animation — shifts hue around the border */
+@keyframes gradientBorderRotate {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Subtle neon pulse glow */
+@keyframes neonPulse {
+  0%, 100% { opacity: 0.7; }
+  50%       { opacity: 1; }
+}
+
+/* Slide in from right for toast notifications */
+@keyframes slideInRight {
+  from {
+    transform: translateX(calc(100% + 1.5rem));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide in from top for modal overlay */
+@keyframes fadeScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Overlay backdrop fade */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Shimmer sweep for loading states */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Spin */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Row fade-in for table rows */
+@keyframes rowFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Animation Utility Classes ───────────────────────────── */
+
+.animate-slide-in-right {
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-scale-in {
+  animation: fadeScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease forwards;
+}
+
+.animate-neon-pulse {
+  animation: neonPulse 2.4s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 2s linear infinite;
+}
+
+.animate-row-fade-in {
+  animation: rowFadeIn 0.3s ease forwards;
+}
+
+/* ─── Glassmorphism Card ──────────────────────────────────── */
+
+.glass-card {
+  background: rgba(10, 10, 18, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.glass-card-elevated {
+  background: rgba(14, 14, 24, 0.6);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Gradient Border Wrapper ─────────────────────────────── */
+
+/*
+  Usage: wrap content inside .gradient-border > .gradient-border-inner
+  The outer div holds the animated background; the inner div masks it.
+*/
+.gradient-border {
+  position: relative;
+  border-radius: inherit;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 45, 120, 0.6),
+    rgba(139, 92, 246, 0.4),
+    rgba(6, 182, 212, 0.3),
+    rgba(255, 45, 120, 0.6)
+  );
+  background-size: 300% 300%;
+  animation: gradientBorderRotate 6s ease infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ─── Desaturated / Out-of-Stock Card ─────────────────────── */
+
+.desaturated-card {
+  filter: grayscale(0.85) brightness(0.6);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Glowing Card Hover ──────────────────────────────────── */
+
+.card-hover-glow {
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.card-hover-glow:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 30px rgba(255, 45, 120, 0.12), 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 45, 120, 0.25) !important;
+}
+
+.card-hover-glow-purple:hover {
+  box-shadow: 0 0 30px rgba(192, 132, 252, 0.15), 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(192, 132, 252, 0.3) !important;
+}
+
+/* ─── Modal Overlay ───────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 4, 10, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease forwards;
+  padding: 1rem;
+}
+
+.modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  border-radius: 24px;
+  background: rgba(12, 12, 22, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 60px rgba(255, 45, 120, 0.12),
+    0 40px 80px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  animation: fadeScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+}
+
+/* ─── Premium Button ──────────────────────────────────────── */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, rgba(255, 45, 120, 0.85), rgba(139, 92, 246, 0.75));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    filter 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px rgba(255, 45, 120, 0.25);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 6px 24px rgba(255, 45, 120, 0.35);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: none;
+  transform: none;
+}
+
+/* ─── Stat Card ───────────────────────────────────────────── */
+
+.stat-card {
+  position: relative;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(10, 10, 20, 0.5);
+  backdrop-filter: blur(16px);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  pointer-events: none;
+}
+
+.stat-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Top-rank row highlights ─────────────────────────────── */
+
+.rank-gold {
+  background: linear-gradient(90deg, rgba(251, 191, 36, 0.07), transparent 60%) !important;
+  border-left: 3px solid rgba(251, 191, 36, 0.6) !important;
+}
+
+.rank-silver {
+  background: linear-gradient(90deg, rgba(203, 213, 225, 0.06), transparent 60%) !important;
+  border-left: 3px solid rgba(203, 213, 225, 0.5) !important;
+}
+
+.rank-bronze {
+  background: linear-gradient(90deg, rgba(180, 83, 9, 0.08), transparent 60%) !important;
+  border-left: 3px solid rgba(180, 83, 9, 0.5) !important;
+}
+
+.rank-self {
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0.07), transparent 60%) !important;
+  border-left: 3px solid rgba(6, 182, 212, 0.5) !important;
+}
+
+/* ─── Page Background Layer ───────────────────────────────── */
+
+.page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(255, 45, 120, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(139, 92, 246, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 0%, rgba(6, 182, 212, 0.02) 0%, transparent 60%);
+}
+
+.page-dot-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 45, 120, 0.5) 1px, transparent 0);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+}
+
+/* ─── Input Base Styling ──────────────────────────────────── */
+
+.input-dark {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #E4E4F0;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.input-dark::placeholder {
+  color: #4B4B6A;
+}
+
+.input-dark:focus {
+  border-color: rgba(192, 132, 252, 0.5);
+  box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.08);
 }

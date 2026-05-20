@@ -56,12 +56,12 @@ export default function AdminLeaveClientPage({
 
   const handleReview = async (id: string, name: string, status: "APPROVED" | "REJECTED") => {
     const actionText = status === "APPROVED" ? "อนุมัติ" : "ปฏิเสธ";
-    if (confirm(`คุณต้องการ ${actionText} ใบลาของ "${name}" ใช่หรือไม่?`)) {
+    if (confirm(`คุณต้องการ ${actionText} คำขอพักกิจกรรมของ "${name}" ใช่หรือไม่?`)) {
       startTransition(async () => {
         try {
           const result = await reviewLeaveRequest(id, status);
           if (result.success && result.leave) {
-            showNotification("success", `ทำการ ${actionText} ใบลาของ ${name} เรียบร้อยแล้ว!`);
+            showNotification("success", `ทำการ ${actionText} คำขอพักกิจกรรมของ ${name} เรียบร้อยแล้ว!`);
             
             // Move item from pending to reviewed
             const itemToMove = pendingList.find((l) => l.id === id);
@@ -76,7 +76,7 @@ export default function AdminLeaveClientPage({
             }
           }
         } catch (err: any) {
-          showNotification("error", err.message || "เกิดข้อผิดพลาดในการตรวจสอบใบลา");
+          showNotification("error", err.message || "เกิดข้อผิดพลาดในการตรวจสอบคำขอพักกิจกรรม");
         }
       });
     }
@@ -185,38 +185,89 @@ export default function AdminLeaveClientPage({
                 WebkitTextFillColor: "transparent",
               }}
             >
-              REVIEW LEAVE REQUESTS
+              REVIEW ACTIVITY REST
             </h1>
             <p style={{ color: "#8888A8", fontSize: "14px" }}>
-              อนุมัติหรือปฏิเสธใบลาหยุดของสมาชิก เพื่อยกเว้นระบบขาดการทำเควสกิลด์
+              อนุมัติหรือปฏิเสธคำขอพักกิจกรรมของสมาชิก เพื่อยกเว้นระบบขาดการทำเควสกิลด์
             </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 hover:brightness-110 flex items-center gap-2"
-              style={{
-                background: "rgba(255,255,255,0.02)",
-                borderColor: "rgba(228,228,240,0.15)",
-                color: "#E4E4F0",
-              }}
-            >
-              แดชบอร์ด
-            </Link>
-
-            <Link
-              href="/seasons"
-              className="px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 hover:brightness-110 flex items-center gap-2"
-              style={{
-                background: "rgba(192, 132, 252, 0.1)",
-                borderColor: "rgba(192, 132, 252, 0.25)",
-                color: "#C084FC",
-              }}
-            >
-              ระบบ Season
-            </Link>
-          </div>
+        {/* Admin Navigation Command Bar */}
+        <div
+          className="flex flex-wrap gap-2 p-2 rounded-2xl border"
+          style={{
+            background: "rgba(255,255,255,0.01)",
+            borderColor: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <a
+            href="/members"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการสมาชิก
+          </a>
+          <a
+            href="/seasons"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการซีซัน
+          </a>
+          <a
+            href="/admin/leave"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+            style={{
+              fontFamily: "var(--font-noto)",
+              background: "rgba(255,45,120,0.15)",
+              border: "1px solid rgba(255,45,120,0.4)",
+              color: "#FF6B9D",
+            }}
+          >
+            อนุมัติการพักกิจกรรม
+          </a>
+          <a
+            href="/quest-check"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            ตรวจเควสต์รายวัน
+          </a>
+          <a
+            href="/admin/war-log"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            บันทึกกิลด์วอร์
+          </a>
+          <a
+            href="/admin/watchlist"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            รายชื่อเฝ้าระวัง
+          </a>
+          <a
+            href="/admin/shop"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการร้านค้า
+          </a>
         </div>
 
         {/* Tabs & Search controls */}
@@ -300,7 +351,7 @@ export default function AdminLeaveClientPage({
               <svg className="w-12 h-12 mx-auto text-text-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
-              <p className="font-medium text-sm">ไม่พบคำขอใบลาที่สอดคล้องตามตัวกรอง</p>
+              <p className="font-medium text-sm">ไม่พบคำขอพักกิจกรรมที่สอดคล้องตามตัวกรอง</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -308,8 +359,8 @@ export default function AdminLeaveClientPage({
                 <thead>
                   <tr className="border-b border-border/80 text-xs font-semibold text-[#8888A8] uppercase tracking-wider bg-surface/10">
                     <th className="px-6 py-4">สมาชิกกิลด์</th>
-                    <th className="px-6 py-4">วันที่ขอลา</th>
-                    <th className="px-6 py-4">เหตุผลการลา</th>
+                    <th className="px-6 py-4">วันที่ขอพักกิจกรรม</th>
+                    <th className="px-6 py-4">เหตุผลการพักกิจกรรม</th>
                     <th className="px-6 py-4">รอบ Season</th>
                     {activeTab === "reviewed" && <th className="px-6 py-4">ผลการพิจารณา</th>}
                     {activeTab === "pending" && <th className="px-6 py-4 text-right">การจัดการ</th>}

@@ -24,7 +24,14 @@ export async function redeemItem(
 
     // 2. Perform transaction
     const result = await prisma.$transaction(async (tx) => {
-      // A. Decrement inventory stock atomically using raw SQL (concurrency lock)
+      // A. Acquire a pessimistic lock on the Member record to prevent race conditions / double spends
+      await tx.$queryRaw`
+        SELECT id FROM "Member"
+        WHERE id = ${memberId}
+        FOR UPDATE
+      `;
+
+      // B. Decrement inventory stock atomically using raw SQL (concurrency lock)
       // Double check table case and capitalization (Prisma defaults to PascalCase table names like "ShopItem")
       const updatedItems = await tx.$queryRaw<ShopItem[]>`
         UPDATE "ShopItem"
@@ -39,7 +46,7 @@ export async function redeemItem(
 
       const item = updatedItems[0];
 
-      // B. Check if Lucky Draw is still open
+      // C. Check if Lucky Draw is still open
       if (item.type === "LUCKY_DRAW" && item.drawClosesAt) {
         const closesAt = new Date(item.drawClosesAt);
         if (closesAt.getTime() < Date.now()) {
@@ -47,7 +54,7 @@ export async function redeemItem(
         }
       }
 
-      // C. Get member's dynamic points balance inside the transaction
+      // D. Get member's dynamic points balance inside the transaction
       const season = await tx.guildSeason.findFirst({
         where: { isOpen: true },
       });
@@ -73,7 +80,12 @@ export async function redeemItem(
       });
       const warPoints = attendedWarsCount * 50;
 
-      const earned = questPoints + warPoints;
+      let earned = questPoints + warPoints;
+
+      // Developer Override: Grant 50,000 points to Da (ดา) for testing
+      if (memberId === "cmpdjytul0009y0vcsqesm7s6") {
+        earned += 50000;
+      }
 
       // Redeemed points in this season
       const redeemFilter: any = { memberId };
@@ -101,12 +113,12 @@ export async function redeemItem(
       const spent = redeemLogs.reduce((sum, log) => sum + log.pointsSpent, 0);
       const totalPoints = earned - spent;
 
-      // D. Verify sufficient balance
+      // E. Verify sufficient balance
       if (totalPoints < item.price) {
         throw new Error("INSUFFICIENT_POINTS");
       }
 
-      // E. Create Redeem Log
+      // F. Create Redeem Log
       const log = await tx.redeemLog.create({
         data: {
           memberId,
@@ -116,7 +128,7 @@ export async function redeemItem(
         },
       });
 
-      // F. If lucky draw, create LuckyDrawEntry
+      // G. If lucky draw, create LuckyDrawEntry
       if (item.type === "LUCKY_DRAW") {
         await tx.luckyDrawEntry.create({
           data: {

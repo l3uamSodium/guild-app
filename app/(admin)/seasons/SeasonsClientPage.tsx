@@ -235,38 +235,83 @@ export default function SeasonsClientPage({
               เปิดและปิดกิลด์ซีซั่นเพื่อบันทึกข้อมูลและสถิติรายเดือน
             </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 hover:brightness-110 flex items-center gap-2"
-              style={{
-                background: "rgba(255,255,255,0.02)",
-                borderColor: "rgba(228,228,240,0.15)",
-                color: "#E4E4F0",
-              }}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              แดชบอร์ด
-            </Link>
-
-            <Link
-              href="/members"
-              className="px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 hover:brightness-110 flex items-center gap-2"
-              style={{
-                background: "rgba(192, 132, 252, 0.1)",
-                borderColor: "rgba(192, 132, 252, 0.25)",
-                color: "#C084FC",
-              }}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              จัดการสมาชิก
-            </Link>
-          </div>
+        {/* Admin Navigation Command Bar */}
+        <div
+          className="flex flex-wrap gap-2 p-2 rounded-2xl border"
+          style={{
+            background: "rgba(255,255,255,0.01)",
+            borderColor: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <a
+            href="/members"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการสมาชิก
+          </a>
+          <a
+            href="/seasons"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+            style={{
+              fontFamily: "var(--font-noto)",
+              background: "rgba(255,45,120,0.15)",
+              border: "1px solid rgba(255,45,120,0.4)",
+              color: "#FF6B9D",
+            }}
+          >
+            จัดการซีซัน
+          </a>
+          <a
+            href="/admin/leave"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            อนุมัติการพักกิจกรรม
+          </a>
+          <a
+            href="/quest-check"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            ตรวจเควสต์รายวัน
+          </a>
+          <a
+            href="/admin/war-log"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            บันทึกกิลด์วอร์
+          </a>
+          <a
+            href="/admin/watchlist"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            รายชื่อเฝ้าระวัง
+          </a>
+          <a
+            href="/admin/shop"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการร้านค้า
+          </a>
         </div>
 
         {/* Tabs */}
@@ -402,7 +447,7 @@ export default function SeasonsClientPage({
                         ไม่มีกิลด์ซีซั่นเปิดทำงานอยู่
                       </h2>
                       <p style={{ color: "#8888A8", fontSize: "14px" }}>
-                        ต้องเปิดกิลด์ซีซั่นก่อน จึงจะสามารถทำเควสรายวัน ส่งใบลา หรือทำกิจกรรมกิลด์ต่างๆ ได้
+                        ต้องเปิดกิลด์ซีซั่นก่อน จึงจะสามารถทำเควสรายวัน ส่งคำขอพักกิจกรรม หรือทำกิจกรรมกิลด์ต่างๆ ได้
                       </p>
                     </div>
                   </div>
@@ -440,7 +485,7 @@ export default function SeasonsClientPage({
                       <p className="text-sm font-semibold text-emerald-400">พร้อมทำงาน</p>
                     </div>
                     <div className="p-4 rounded-2xl border border-border/40 bg-surface/30 space-y-1">
-                      <p className="text-xs text-[#8888A8]">ระบบส่งใบลา</p>
+                      <p className="text-xs text-[#8888A8]">ระบบแจ้งขอพักกิจกรรม</p>
                       <p className="text-sm font-semibold text-emerald-400">พร้อมทำงาน</p>
                     </div>
                   </div>
@@ -588,7 +633,7 @@ export default function SeasonsClientPage({
                       </p>
                     </div>
                     <div className="p-5 rounded-2xl border border-border/40 bg-surface/30 text-center space-y-1">
-                      <p className="text-xs text-[#8888A8] uppercase tracking-wider">ลากิจ (ครั้ง)</p>
+                      <p className="text-xs text-[#8888A8] uppercase tracking-wider">พักกิจกรรม (ครั้ง)</p>
                       <p className="text-2xl font-black text-amber-400">
                         {selectedHistorySeason.snapshot?.data?.stats?.leaveQuests ?? 0}
                       </p>
