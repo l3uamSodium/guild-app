@@ -4,8 +4,8 @@
 
 ## Tasks & Branches
 
-### `feat/onboarding-form`
-**Files:** `app/(auth)/onboarding/page.tsx`, `app/(auth)/onboarding/actions.ts`
+### `feat/onboarding-form` [IN PROGRESS]
+**Files:** `app/(public)/onboarding/page.tsx` (Basic info page created), `app/(public)/onboarding/actions.ts`
 
 **Prompt:**
 ```
@@ -56,8 +56,8 @@
 
 ---
 
-### `feat/landing-page`
-**Files:** `app/(public)/page.tsx`
+### `feat/landing-page` [COMPLETED]
+**Files:** `app/page.tsx`
 
 **Prompt:**
 ```
