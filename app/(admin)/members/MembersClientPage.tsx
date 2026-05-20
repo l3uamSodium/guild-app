@@ -194,6 +194,73 @@ export default function MembersClientPage({
             </div>
           </div>
         </div>
+        {/* Admin Quick Navigation Command Bar */}
+        <div
+          className="flex flex-wrap gap-2 p-2 rounded-2xl border"
+          style={{
+            background: "rgba(255,255,255,0.01)",
+            borderColor: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <a
+            href="/members"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+            style={{
+              fontFamily: "var(--font-noto)",
+              background: "rgba(255,45,120,0.15)",
+              border: "1px solid rgba(255,45,120,0.4)",
+              color: "#FF6B9D",
+            }}
+          >
+            จัดการสมาชิก
+          </a>
+          <a
+            href="/seasons"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            จัดการซีซัน
+          </a>
+          <a
+            href="/admin/leave"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            อนุมัติการลา
+          </a>
+          <a
+            href="/quest-check"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            ตรวจเควสต์รายวัน
+          </a>
+          <a
+            href="/admin/war-log"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            บันทึกกิลด์วอร์
+          </a>
+          <a
+            href="/admin/watchlist"
+            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:bg-white/5 border border-transparent text-slate-400"
+            style={{
+              fontFamily: "var(--font-noto)",
+            }}
+          >
+            รายชื่อเฝ้าระวัง
+          </a>
+        </div>
 
         {/* Action Bar (Tabs & Search) */}
         <div
