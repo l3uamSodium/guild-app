@@ -13,11 +13,15 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (state?.success) {
-      update().then(() => {
-        router.push("/pending");
+      // Pass an empty object to update() to force NextAuth to perform a POST request and rewrite the JWT cookie
+      update({}).then(() => {
+        window.location.href = "/pending";
+      }).catch((err) => {
+        console.error("Session update failed, doing fallback redirect:", err);
+        window.location.href = "/pending";
       });
     }
-  }, [state, update, router]);
+  }, [state, update]);
 
   return (
     <main
