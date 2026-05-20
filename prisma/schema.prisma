@@ -70,6 +70,7 @@ model Member {
   nickname   String
   role       Role     @default(MEMBER)
   status     Status   @default(PENDING)
+  memberType MemberType @default(NORMAL)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -92,6 +93,11 @@ enum Status {
   PENDING
   ACTIVE
   INACTIVE
+}
+
+enum MemberType {
+  NORMAL
+  WAR
 }
 
 // ─── Season ───────────────────────────────────────────────────────────────────

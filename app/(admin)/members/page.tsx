@@ -53,6 +53,7 @@ export default async function MembersPage(props: {
     nickname: m.nickname,
     discordTag: m.user?.name || m.user?.email || "Unknown User",
     avatar: m.user?.image || null,
+    memberType: m.memberType,
     createdAt: m.createdAt.toISOString(),
   }));
 
@@ -62,6 +63,7 @@ export default async function MembersPage(props: {
     nickname: m.nickname,
     discordTag: m.user?.name || m.user?.email || "Unknown User",
     avatar: m.user?.image || null,
+    memberType: m.memberType,
     createdAt: m.createdAt.toISOString(),
   }));
 

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Image from "next/image";
-import { approveMember, deactivateMember } from "./actions";
+import { approveMember, deactivateMember, updateMemberType } from "./actions";
 
 interface MemberData {
   id: string;
@@ -10,6 +10,7 @@ interface MemberData {
   nickname: string;
   discordTag: string;
   avatar: string | null;
+  memberType: "NORMAL" | "WAR";
   createdAt: string;
 }
 
@@ -67,6 +68,27 @@ export default function MembersClientPage({
           setActiveList(prev => prev.filter(m => m.id !== id));
         } else {
           showNotification("error", result.error || "เกิดข้อผิดพลาด");
+        }
+      });
+    }
+  };
+
+  const handleToggleType = async (id: string, name: string, currentType: "NORMAL" | "WAR") => {
+    const nextType = currentType === "NORMAL" ? "WAR" : "NORMAL";
+    const nextTypeLabel = nextType === "WAR" ? "สายวอ" : "สมาชิกปกติ";
+    if (confirm(`คุณต้องการเปลี่ยนประเภทของ "${name}" เป็น "${nextTypeLabel}" ใช่หรือไม่?`)) {
+      startTransition(async () => {
+        const result = await updateMemberType(id, nextType);
+        if (result.success) {
+          showNotification("success", `เปลี่ยนประเภทของ ${name} เป็น ${nextTypeLabel} สำเร็จ!`);
+          setActiveList(prev =>
+            prev.map(m => (m.id === id ? { ...m, memberType: nextType } : m))
+          );
+          setPendingList(prev =>
+            prev.map(m => (m.id === id ? { ...m, memberType: nextType } : m))
+          );
+        } else {
+          showNotification("error", result.error || "เกิดข้อผิดพลาดในการเปลี่ยนประเภท");
         }
       });
     }
@@ -346,6 +368,7 @@ export default function MembersClientPage({
                   <th className="px-6 py-4 font-semibold text-xs text-slate-500 uppercase tracking-wider" style={{ fontFamily: "var(--font-noto)" }}>โปรไฟล์ Discord</th>
                   <th className="px-6 py-4 font-semibold text-xs text-slate-500 uppercase tracking-wider" style={{ fontFamily: "var(--font-noto)" }}>ชื่อในเกม (IGN)</th>
                   <th className="px-6 py-4 font-semibold text-xs text-slate-500 uppercase tracking-wider" style={{ fontFamily: "var(--font-noto)" }}>ชื่อเล่น</th>
+                  <th className="px-6 py-4 font-semibold text-xs text-slate-500 uppercase tracking-wider" style={{ fontFamily: "var(--font-noto)" }}>ประเภทสมาชิก</th>
                   <th className="px-6 py-4 font-semibold text-xs text-slate-500 uppercase tracking-wider" style={{ fontFamily: "var(--font-noto)" }}>วันที่ส่งข้อมูล</th>
                   <th className="px-6 py-4 font-semibold text-xs text-slate-500 uppercase tracking-wider text-right" style={{ fontFamily: "var(--font-noto)" }}>จัดการสิทธิ์</th>
                 </tr>
@@ -353,7 +376,7 @@ export default function MembersClientPage({
               <tbody className="divide-y divide-white/[0.03]">
                 {filteredList.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500" style={{ fontFamily: "var(--font-noto)", fontSize: "14px" }}>
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500" style={{ fontFamily: "var(--font-noto)", fontSize: "14px" }}>
                       ไม่พบรายชื่อที่ต้องการค้นหา
                     </td>
                   </tr>
@@ -392,40 +415,88 @@ export default function MembersClientPage({
                         {member.nickname}
                       </td>
 
+                      {/* Member Type Badge */}
+                      <td className="px-6 py-4">
+                        {member.memberType === "WAR" ? (
+                          <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
+                            style={{
+                              background: "rgba(255, 45, 120, 0.08)",
+                              borderColor: "rgba(255, 45, 120, 0.3)",
+                              color: "#FF6B9D",
+                              boxShadow: "0 0 10px rgba(255, 45, 120, 0.15)",
+                              fontFamily: "var(--font-noto)"
+                            }}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D78] animate-pulse" />
+                            สายวอ
+                          </span>
+                        ) : (
+                          <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
+                            style={{
+                              background: "rgba(88, 101, 242, 0.05)",
+                              borderColor: "rgba(88, 101, 242, 0.2)",
+                              color: "#8B95F6",
+                              fontFamily: "var(--font-noto)"
+                            }}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#5865F2]" />
+                            คนปกติ
+                          </span>
+                        )}
+                      </td>
+
                       {/* Date */}
                       <td className="px-6 py-4 text-xs text-slate-500">
                         {formatDate(member.createdAt)}
                       </td>
 
                       {/* Action buttons */}
-                      <td className="px-6 py-4 text-right">
-                        {activeTab === "pending" ? (
-                          <button
-                            onClick={() => handleApprove(member.id, member.inGameName)}
-                            disabled={isPendingAction}
-                            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                            style={{
-                              background: "rgba(16,185,129,0.15)",
-                              border: "1px solid rgba(16,185,129,0.35)",
-                              color: "#34D399",
-                            }}
-                          >
-                            อนุมัติสมาชิก
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleDeactivate(member.id, member.inGameName)}
-                            disabled={isPendingAction}
-                            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                            style={{
-                              background: "rgba(239,68,68,0.1)",
-                              border: "1px solid rgba(239,68,68,0.3)",
-                              color: "#F87171",
-                            }}
-                          >
-                            ปิดใช้งาน
-                          </button>
-                        )}
+                      <td className="px-6 py-4">
+                        <div className="flex justify-end gap-2">
+                          {activeTab === "pending" ? (
+                            <button
+                              onClick={() => handleApprove(member.id, member.inGameName)}
+                              disabled={isPendingAction}
+                              className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                              style={{
+                                background: "rgba(16,185,129,0.15)",
+                                border: "1px solid rgba(16,185,129,0.35)",
+                                color: "#34D399",
+                              }}
+                            >
+                              อนุมัติสมาชิก
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => handleToggleType(member.id, member.inGameName, member.memberType)}
+                                disabled={isPendingAction}
+                                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                                style={{
+                                  background: member.memberType === "WAR" ? "rgba(88, 101, 242, 0.12)" : "rgba(255, 45, 120, 0.12)",
+                                  border: member.memberType === "WAR" ? "1px solid rgba(88, 101, 242, 0.3)" : "1px solid rgba(255, 45, 120, 0.3)",
+                                  color: member.memberType === "WAR" ? "#8B95F6" : "#FF6B9D",
+                                }}
+                              >
+                                {member.memberType === "WAR" ? "ตั้งเป็นคนปกติ" : "ตั้งเป็นสายวอ"}
+                              </button>
+                              <button
+                                onClick={() => handleDeactivate(member.id, member.inGameName)}
+                                disabled={isPendingAction}
+                                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                                style={{
+                                  background: "rgba(239,68,68,0.1)",
+                                  border: "1px solid rgba(239,68,68,0.3)",
+                                  color: "#F87171",
+                                }}
+                              >
+                                ปิดใช้งาน
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))

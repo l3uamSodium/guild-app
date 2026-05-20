@@ -37,9 +37,12 @@ export async function getAbsentees(
   pastDate.setUTCDate(today.getUTCDate() - days + 1);
   pastDate.setUTCHours(0, 0, 0, 0);
 
-  // Fetch all ACTIVE members
+  // Fetch all ACTIVE and NORMAL members (exclude WAR members who are not expected to do daily quests)
   const activeMembers = await prisma.member.findMany({
-    where: { status: "ACTIVE" },
+    where: { 
+      status: "ACTIVE",
+      memberType: "NORMAL",
+    },
     select: {
       id: true,
       inGameName: true,

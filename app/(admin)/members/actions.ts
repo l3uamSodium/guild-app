@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
+import { MemberType } from "@/generated/prisma/client";
 
 export async function approveMember(memberId: string) {
   try {
@@ -97,5 +98,54 @@ export async function deactivateMember(memberId: string) {
   } catch (error: any) {
     console.error("Deactivate Member Error:", error);
     return { success: false, error: error.message || "เกิดข้อผิดพลาดในการปิดใช้งานสมาชิก" };
+  }
+}
+
+export async function updateMemberType(memberId: string, type: MemberType) {
+  try {
+    const adminSession = await requireRole(["GUILD_MASTER", "VICE_MASTER"]);
+    const adminMemberId = adminSession?.user?.memberId;
+
+    if (!adminMemberId) {
+      return { success: false, error: "ไม่พบข้อมูลผู้ดำเนินการในระบบสมาชิก" };
+    }
+
+    const member = await prisma.member.findUnique({
+      where: { id: memberId },
+    });
+
+    if (!member) {
+      return { success: false, error: "ไม่พบรายชื่อสมาชิกนี้ในระบบ" };
+    }
+
+    if (member.memberType === type) {
+      return { success: false, error: "ประเภทสมาชิกนี้ตรงกับค่าปัจจุบันอยู่แล้ว" };
+    }
+
+    // Update member type and create audit log in a transaction
+    await prisma.$transaction(async (tx) => {
+      await tx.member.update({
+        where: { id: memberId },
+        data: { memberType: type },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorId: adminMemberId,
+          action: "UPDATE_MEMBER_TYPE",
+          targetType: "Member",
+          targetId: memberId,
+          oldValue: JSON.stringify({ memberType: member.memberType }),
+          newValue: JSON.stringify({ memberType: type }),
+        },
+      });
+    });
+
+    revalidatePath("/members");
+    revalidatePath("/admin/watchlist");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Update Member Type Error:", error);
+    return { success: false, error: error.message || "เกิดข้อผิดพลาดในการเปลี่ยนประเภทสมาชิก" };
   }
 }
