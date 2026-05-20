@@ -344,7 +344,7 @@ export default function LeaderboardClientPage({
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y" style={{ borderColor: "rgba(255,255,255,0.03)" }}>
+                  <tbody className="space-y-1">
                     {filteredLeaderboard.map((entry, index) => {
                       const isSelf = entry.isCurrentUser;
                       const isTop3 = entry.rank <= 3;

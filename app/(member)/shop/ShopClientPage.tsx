@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MemberNavbar from "@/components/features/MemberNavbar";
 import { redeemItem } from "./actions";
@@ -45,6 +45,15 @@ function RedeemModal({
 }) {
   const remaining = currentBalance - item.price;
   const isLucky = item.type === "LUCKY_DRAW";
+
+  useEffect(() => {
+    // Lock body scroll
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
 
   return (
     <div className="modal-overlay" onClick={onCancel}>
