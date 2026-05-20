@@ -15,23 +15,31 @@ export default function PendingPage() {
       <div
         className="absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse 60% 60% at 30% 40%, rgba(255,45,120,0.06) 0%, transparent 70%), radial-gradient(ellipse 50% 50% at 70% 60%, rgba(88,101,242,0.05) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 60% 60% at 30% 40%, rgba(255,45,120,0.07) 0%, transparent 70%), radial-gradient(ellipse 50% 50% at 70% 60%, rgba(88,101,242,0.06) 0%, transparent 70%)",
         }}
       />
 
       {/* Dot grid */}
       <div
-        className="absolute inset-0 opacity-[0.1]"
+        className="absolute inset-0 opacity-[0.15]"
         style={{
-          backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,45,120,0.5) 1px, transparent 0)",
+          backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,45,120,0.6) 1px, transparent 0)",
           backgroundSize: "36px 36px",
           maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%)",
         }}
       />
 
+      {/* Horizontal lines */}
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(255,45,120,0.8) 60px, rgba(255,45,120,0.8) 61px)",
+        }}
+      />
+
       {/* Top glow */}
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[2px] opacity-50"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] opacity-60"
         style={{ background: "linear-gradient(90deg, transparent, #FF2D78, transparent)" }}
       />
 
@@ -40,10 +48,10 @@ export default function PendingPage() {
         className="relative z-10 flex flex-col gap-8 p-8 md:p-10 rounded-3xl w-full"
         style={{
           maxWidth: "520px",
-          background: "rgba(255,255,255,0.02)",
-          border: "1px solid rgba(255,45,120,0.1)",
+          background: "rgba(255,255,255,0.025)",
+          border: "1px solid rgba(255,45,120,0.15)",
           backdropFilter: "blur(24px)",
-          boxShadow: "0 20px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)",
+          boxShadow: "0 20px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)",
         }}
       >
         {/* Subtle corner accents */}
@@ -53,18 +61,20 @@ export default function PendingPage() {
         <span className="absolute bottom-0 right-0 w-6 h-6 border-b border-r rounded-br-3xl" style={{ borderColor: "rgba(255,45,120,0.25)" }} />
 
         {/* Portal Header */}
-        <div className="space-y-1.5 border-b border-white/[0.04] pb-5">
-          <span style={{ fontFamily: "var(--font-cinzel)", color: "#FF6B9D", fontSize: "11px", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+        <div className="space-y-2 border-b border-white/[0.04] pb-5">
+          <span style={{ fontFamily: "var(--font-noto)", color: "#FF6B9D", fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase" }} className="block">
             MEMBER PORTAL
           </span>
           <h1
             style={{
-              fontFamily: "var(--font-cinzel)",
-              fontSize: "20px",
-              fontWeight: 900,
-              letterSpacing: "0.1em",
+              fontFamily: "var(--font-noto)",
+              fontSize: "18px",
+              fontWeight: 800,
+              letterSpacing: "0.05em",
               color: "#FFFFFF",
+              lineHeight: "1.3",
             }}
+            className="block"
           >
             REGISTRATION STATUS
           </h1>
