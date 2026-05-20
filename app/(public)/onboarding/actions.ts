@@ -26,7 +26,7 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
     });
 
     if (existing) {
-      return { error: "คุณลงทะเบียนไปแล้ว กรุณารอแอดมินอนุมัติ" };
+      return { error: "คุณลงทะเบียนไปแล้ว กรุณารอแอดมินอนุมัติ", success: true };
     }
 
     // Create member
@@ -40,12 +40,9 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
       },
     });
 
-    // We will redirect to a pending page or back to dashboard
+    return { success: true };
   } catch (error) {
     console.error("Onboarding Error:", error);
     return { error: "เกิดข้อผิดพลาดในการบันทึกข้อมูล" };
   }
-
-  // Next.js requires redirect outside of try-catch block
-  redirect("/pending"); 
 }

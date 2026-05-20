@@ -2,12 +2,22 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { submitOnboarding } from "./actions";
 
 export default function OnboardingPage() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const router = useRouter();
   const [state, action, isPending] = useActionState(submitOnboarding, null);
+
+  useEffect(() => {
+    if (state?.success) {
+      update().then(() => {
+        router.push("/pending");
+      });
+    }
+  }, [state, update, router]);
 
   return (
     <main
