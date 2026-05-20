@@ -129,7 +129,15 @@ export default function MembersClientPage({
             borderColor: notification.type === "success" ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.3)",
           }}
         >
-          <span className="text-xl">{notification.type === "success" ? "✅" : "❌"}</span>
+          {notification.type === "success" ? (
+            <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          )}
           <span style={{ fontFamily: "var(--font-noto)", fontSize: "14px", color: "#E4E4F0" }}>
             {notification.message}
           </span>
@@ -142,7 +150,6 @@ export default function MembersClientPage({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3">
-              <span className="text-2xl">👹</span>
               <h1
                 style={{
                   fontFamily: "var(--font-cinzel)",
@@ -242,7 +249,9 @@ export default function MembersClientPage({
                 fontSize: "13px",
               }}
             />
-            <span className="absolute left-3.5 top-3.5 text-xs opacity-40">🔍</span>
+            <svg className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
           </div>
         </div>
 
@@ -295,7 +304,9 @@ export default function MembersClientPage({
                             {member.avatar ? (
                               <Image src={member.avatar} alt={member.discordTag} width={36} height={36} className="object-cover" />
                             ) : (
-                              <span className="text-sm">👤</span>
+                              <svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                              </svg>
                             )}
                           </div>
                           <div>
