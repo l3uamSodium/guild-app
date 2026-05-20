@@ -84,7 +84,7 @@ export default function PendingPage() {
         <div className="relative pl-8 space-y-6">
           {/* Vertical Connective Line */}
           <div
-            className="absolute left-[11px] top-3 bottom-3 w-[2px]"
+            className="absolute left-[11px] top-3 bottom-3 w-[2px] z-0"
             style={{
               background: "linear-gradient(180deg, #10B981 0%, #10B981 60%, rgba(255,45,120,0.2) 60%, rgba(255,45,120,0.2) 100%)",
             }}
@@ -93,9 +93,9 @@ export default function PendingPage() {
           {/* Step 1 */}
           <div className="relative flex flex-col gap-1">
             <span
-              className="absolute -left-[31px] w-6 h-6 rounded-full flex items-center justify-center"
+              className="absolute -left-[31px] w-6 h-6 rounded-full flex items-center justify-center z-10"
               style={{
-                background: "rgba(16,185,129,0.15)",
+                background: "#0a0a13",
                 border: "1.5px solid #10B981",
               }}
             >
@@ -114,9 +114,9 @@ export default function PendingPage() {
           {/* Step 2 */}
           <div className="relative flex flex-col gap-1">
             <span
-              className="absolute -left-[31px] w-6 h-6 rounded-full flex items-center justify-center"
+              className="absolute -left-[31px] w-6 h-6 rounded-full flex items-center justify-center z-10"
               style={{
-                background: "rgba(16,185,129,0.15)",
+                background: "#0a0a13",
                 border: "1.5px solid #10B981",
               }}
             >
@@ -135,9 +135,9 @@ export default function PendingPage() {
           {/* Step 3 */}
           <div className="relative flex flex-col gap-1">
             <span
-              className="absolute -left-[31px] w-6 h-6 rounded-full flex items-center justify-center"
+              className="absolute -left-[31px] w-6 h-6 rounded-full flex items-center justify-center z-10"
               style={{
-                background: "rgba(255,45,120,0.05)",
+                background: "#0a0a13",
                 border: "1.5px solid rgba(255,45,120,0.6)",
                 boxShadow: "0 0 10px rgba(255,45,120,0.2)",
               }}
