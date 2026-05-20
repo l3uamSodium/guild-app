@@ -2,9 +2,38 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { checkMemberStatus } from "./actions";
 
 export default function PendingPage() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const [checkingStatus, setCheckingStatus] = useState("เชื่อมต่อระบบตรวจจับเรียลไทม์...");
+
+  useEffect(() => {
+    // Poll status every 3 seconds
+    const interval = setInterval(async () => {
+      try {
+        const res = await checkMemberStatus();
+        if (res.status === "ACTIVE") {
+          setCheckingStatus("ได้รับอนุมัติสิทธิ์แล้ว! กำลังเข้าสู่แดชบอร์ด...");
+          // Force update NextAuth session cookie so it gets status ACTIVE
+          await update({});
+          // Full page redirect to bypass any stale edge middleware state
+          window.location.href = "/dashboard";
+        } else if (res.status === "INACTIVE") {
+          setCheckingStatus("บัญชีของคุณถูกระงับสิทธิ์การใช้งาน...");
+          await update({});
+          window.location.href = "/deactivated";
+        } else {
+          setCheckingStatus("ระบบกำลังตรวจสอบสถานะอนุมัติแบบเรียลไทม์...");
+        }
+      } catch (err) {
+        console.error("Failed to poll member status:", err);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [update]);
 
   return (
     <main
@@ -152,7 +181,6 @@ export default function PendingPage() {
             </div>
           </div>
         </div>
-
         {/* Discord user snapshot card */}
         {session?.user && (
           <div

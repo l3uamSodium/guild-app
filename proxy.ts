@@ -25,8 +25,8 @@ export default withAuth(
       return NextResponse.next();
     }
 
-    // 2. ไม่มี token → redirect /  (landing + login)
-    if (!token) {
+    // 2. ไม่มี token หรือเซสชันถูกล้าง → redirect /  (landing + login)
+    if (!token || !token.userId) {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
