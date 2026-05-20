@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { redirect } from "next/navigation";
 
-export async function submitOnboarding(formData: FormData) {
+export async function submitOnboarding(prevState: any, formData: FormData) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
