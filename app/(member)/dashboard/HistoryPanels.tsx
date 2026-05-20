@@ -163,9 +163,10 @@ function PanelCard({
     <div
       className="flex flex-col rounded-2xl border overflow-hidden"
       style={{
-        background: "rgba(10, 10, 20, 0.5)",
-        borderColor: "rgba(255, 255, 255, 0.06)",
+        background: "rgba(255, 255, 255, 0.02)",
+        borderColor: "rgba(255, 45, 120, 0.15)",
         backdropFilter: "blur(16px)",
+        boxShadow: "0 4px 20px rgba(255, 45, 120, 0.03)",
       }}
     >
       {/* Panel top accent */}

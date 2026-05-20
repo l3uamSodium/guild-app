@@ -163,9 +163,10 @@ export default async function MemberDashboardPage() {
         <div
           className="relative p-6 sm:p-8 rounded-2xl border overflow-hidden"
           style={{
-            background: "rgba(10, 10, 20, 0.6)",
-            borderColor: "rgba(255, 255, 255, 0.06)",
+            background: "rgba(255, 255, 255, 0.025)",
+            borderColor: "rgba(255, 45, 120, 0.2)",
             backdropFilter: "blur(24px)",
+            boxShadow: "0 4px 24px rgba(255, 45, 120, 0.08)",
           }}
         >
           {/* Pink top accent */}
@@ -230,9 +231,10 @@ export default async function MemberDashboardPage() {
             <div
               className="flex-shrink-0 px-7 py-5 rounded-2xl border flex flex-col items-center justify-center"
               style={{
-                background: "rgba(255,255,255,0.02)",
-                borderColor: "rgba(255,255,255,0.06)",
+                background: "rgba(255,255,255,0.03)",
+                borderColor: "rgba(255,255,255,0.12)",
                 minWidth: "130px",
+                boxShadow: "0 2px 12px rgba(0,0,0,0.2)",
               }}
             >
               <span className="text-[10px] text-slate-600 uppercase tracking-widest mb-1">อันดับ</span>

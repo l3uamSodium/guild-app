@@ -148,8 +148,9 @@ export default function QuestCalendar({
     <div
       className="p-6 rounded-3xl border backdrop-blur-md space-y-6"
       style={{
-        background: "rgba(10, 10, 18, 0.4)",
-        borderColor: "rgba(255, 255, 255, 0.05)",
+        background: "rgba(255, 255, 255, 0.02)",
+        borderColor: "rgba(255, 45, 120, 0.15)",
+        boxShadow: "0 4px 20px rgba(255, 45, 120, 0.03)",
       }}
     >
       {/* Calendar Header */}
