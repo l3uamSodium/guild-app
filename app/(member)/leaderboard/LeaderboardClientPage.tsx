@@ -344,133 +344,74 @@ export default function LeaderboardClientPage({
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y" style={{ borderColor: "rgba(255,255,255,0.03)" }}>
                     {filteredLeaderboard.map((entry, index) => {
                       const isSelf = entry.isCurrentUser;
-                      const rank = entry.rank;
-                      const isTop3 = rank <= 3;
+                      const isTop3 = entry.rank <= 3;
 
-                      // ── Progressive opacity for rank 4+ ──
-                      // rank 4 → 0.70, rank 5 → 0.60, rank 6 → 0.52 … floor at 0.28
-                      const rowOpacity = isTop3 || isSelf
-                        ? 1
-                        : Math.max(0.28, 0.76 - (rank - 4) * 0.08);
+                      let nameColor = "#64748B"; // slate-500
+                      if (entry.rank === 1) nameColor = "#FBBF24";
+                      else if (entry.rank === 2) nameColor = "#E2E8F0"; // brighter silver
+                      else if (entry.rank === 3) nameColor = "#F59E0B"; // brighter bronze
+                      else if (isSelf) nameColor = "#06B6D4";
 
-                      // ── Name / accent colours ──
-                      let nameColor = isSelf ? "#06B6D4" : "#64748B";
-                      if (rank === 1) nameColor = "#FBBF24";
-                      else if (rank === 2) nameColor = "#E2E8F0";
-                      else if (rank === 3) nameColor = "#D97706";
-
-                      // ── Avatar ring colours ──
-                      let avatarBorder = "rgba(255,255,255,0.06)";
-                      if (rank === 1) avatarBorder = "rgba(251,191,36,0.55)";
-                      else if (rank === 2) avatarBorder = "rgba(226,232,240,0.4)";
-                      else if (rank === 3) avatarBorder = "rgba(217,119,6,0.45)";
+                      let avatarBorder = "rgba(255,255,255,0.04)";
+                      if (entry.rank === 1) avatarBorder = "rgba(251,191,36,0.5)";
+                      else if (entry.rank === 2) avatarBorder = "rgba(226,232,240,0.4)";
+                      else if (entry.rank === 3) avatarBorder = "rgba(245,158,11,0.4)";
                       else if (isSelf) avatarBorder = "rgba(6,182,212,0.4)";
 
-                      // ── Row background for top 3 ──
-                      let rowBg = "transparent";
-                      let rowBorderLeft = "none";
-                      if (rank === 1) {
-                        rowBg = "linear-gradient(90deg, rgba(251,191,36,0.10) 0%, rgba(251,191,36,0.04) 50%, transparent 100%)";
-                        rowBorderLeft = "3px solid rgba(251,191,36,0.7)";
-                      } else if (rank === 2) {
-                        rowBg = "linear-gradient(90deg, rgba(226,232,240,0.07) 0%, rgba(226,232,240,0.02) 50%, transparent 100%)";
-                        rowBorderLeft = "3px solid rgba(226,232,240,0.45)";
-                      } else if (rank === 3) {
-                        rowBg = "linear-gradient(90deg, rgba(217,119,6,0.09) 0%, rgba(217,119,6,0.03) 50%, transparent 100%)";
-                        rowBorderLeft = "3px solid rgba(217,119,6,0.5)";
-                      } else if (isSelf) {
-                        rowBg = "linear-gradient(90deg, rgba(6,182,212,0.07) 0%, transparent 60%)";
-                        rowBorderLeft = "3px solid rgba(6,182,212,0.4)";
+                      let rowOpacity = 1;
+                      if (!isTop3 && !isSelf) {
+                        // Fade progressively from rank 4 downwards, min opacity 0.35
+                        rowOpacity = Math.max(0.35, 1 - (entry.rank - 3) * 0.08);
                       }
-
-                      // ── Points glow for top 3 ──
-                      const ptsShadow =
-                        rank === 1 ? "0 0 18px rgba(251,191,36,0.5)"
-                        : rank === 2 ? "0 0 14px rgba(226,232,240,0.35)"
-                        : rank === 3 ? "0 0 12px rgba(217,119,6,0.4)"
-                        : isSelf ? "0 0 12px rgba(6,182,212,0.4)"
-                        : "none";
-
-                      const ptsColor =
-                        rank === 1 ? "#FBBF24"
-                        : rank === 2 ? "#E2E8F0"
-                        : rank === 3 ? "#D97706"
-                        : isSelf ? "#06B6D4"
-                        : "#4B5563";
 
                       return (
                         <tr
                           key={entry.memberId}
-                          className="transition-all duration-200 animate-row-fade-in"
-                          style={{
-                            background: rowBg,
-                            borderLeft: rowBorderLeft,
-                            borderBottom: isTop3
-                              ? `1px solid rgba(255,255,255,0.05)`
-                              : `1px solid rgba(255,255,255,0.025)`,
-                            opacity: rowOpacity,
-                            animationDelay: `${Math.min(index * 30, 300)}ms`,
+                          className={`transition-all duration-200 hover:bg-white/[0.03] hover:opacity-100 animate-row-fade-in ${rowClass(entry.rank, isSelf)}`}
+                          style={{ 
+                            animationDelay: `${Math.min(index * 30, 300)}ms`, 
                             animationFillMode: "both",
+                            opacity: rowOpacity
                           }}
                         >
                           {/* Rank */}
-                          <td className="text-center" style={{ padding: isTop3 ? "18px 16px 18px 24px" : "12px 16px 12px 24px" }}>
-                            <RankBadge rank={rank} />
+                          <td className="p-4 pl-6 text-center">
+                            <RankBadge rank={entry.rank} />
                           </td>
 
                           {/* Member */}
-                          <td style={{ padding: isTop3 ? "18px 16px" : "12px 16px" }}>
+                          <td className="p-4">
                             <div className="flex items-center gap-3">
-                              <div className="relative flex-shrink-0">
+                              <div className="relative">
                                 <Avatar
                                   url={entry.avatar}
                                   name={entry.inGameName}
-                                  size={rank === 1 ? 46 : rank <= 3 ? 40 : 34}
+                                  size={isTop3 ? 40 : 36}
                                   borderColor={avatarBorder}
                                 />
-                                {/* Gold/silver/bronze glow ring for top 3 */}
-                                {rank <= 3 && (
-                                  <span
-                                    className="absolute inset-0 rounded-full pointer-events-none"
-                                    style={{
-                                      boxShadow:
-                                        rank === 1 ? "0 0 16px rgba(251,191,36,0.45)"
-                                        : rank === 2 ? "0 0 12px rgba(226,232,240,0.25)"
-                                        : "0 0 12px rgba(217,119,6,0.35)",
-                                    }}
-                                  />
-                                )}
                                 {isSelf && (
                                   <span
                                     className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 animate-neon-pulse"
-                                    style={{ background: "#06B6D4", borderColor: "#08080F" }}
+                                    style={{
+                                      background: "#06B6D4",
+                                      borderColor: "#08080F",
+                                    }}
                                   />
                                 )}
                               </div>
-
                               <div>
                                 <div
-                                  className="font-bold"
-                                  style={{
-                                    fontFamily: "var(--font-noto)",
-                                    fontSize: rank === 1 ? "17px" : rank <= 3 ? "15px" : "13px",
-                                    color: nameColor,
-                                    textShadow: rank === 1 ? "0 0 20px rgba(251,191,36,0.4)" : "none",
-                                    letterSpacing: rank === 1 ? "0.01em" : "normal",
-                                  }}
+                                  className={`font-bold text-sm ${isTop3 ? "text-base" : ""}`}
+                                  style={{ fontFamily: "var(--font-noto)", color: nameColor }}
                                 >
                                   {entry.inGameName}
                                 </div>
                                 <div
-                                  className="text-[11px]"
-                                  style={{
-                                    fontFamily: "var(--font-noto)",
-                                    color: isTop3 ? "rgba(255,255,255,0.35)" : "#2D2D42",
-                                    marginTop: "2px",
-                                  }}
+                                  className="text-[11px] text-slate-600"
+                                  style={{ fontFamily: "var(--font-noto)" }}
                                 >
                                   {entry.nickname}
                                 </div>
@@ -479,52 +420,36 @@ export default function LeaderboardClientPage({
                           </td>
 
                           {/* Quests */}
-                          <td className="text-center hidden sm:table-cell" style={{ padding: isTop3 ? "18px 16px" : "12px 16px" }}>
+                          <td className="p-4 text-center hidden sm:table-cell">
                             <span
-                              className="font-mono font-bold"
-                              style={{
-                                fontSize: isTop3 ? "15px" : "13px",
-                                color: entry.questCount > 0
-                                  ? isTop3 ? "#34D399" : "rgba(52,211,153,0.55)"
-                                  : "#1E1E2E",
-                              }}
+                              className="text-sm font-mono font-bold"
+                              style={{ color: entry.questCount > 0 ? "#10B981" : "#2D2D42" }}
                             >
                               {entry.questCount}
                             </span>
                           </td>
 
                           {/* Wars */}
-                          <td className="text-center hidden sm:table-cell" style={{ padding: isTop3 ? "18px 16px" : "12px 16px" }}>
+                          <td className="p-4 text-center hidden sm:table-cell">
                             <span
-                              className="font-mono font-bold"
-                              style={{
-                                fontSize: isTop3 ? "15px" : "13px",
-                                color: entry.warCount > 0
-                                  ? isTop3 ? "#A78BFA" : "rgba(167,139,250,0.55)"
-                                  : "#1E1E2E",
-                              }}
+                              className="text-sm font-mono font-bold"
+                              style={{ color: entry.warCount > 0 ? "#8B5CF6" : "#2D2D42" }}
                             >
                               {entry.warCount}
                             </span>
                           </td>
 
                           {/* Points */}
-                          <td className="text-right" style={{ padding: isTop3 ? "18px 24px 18px 16px" : "12px 24px 12px 16px" }}>
+                          <td className="p-4 pr-6 text-right">
                             <span
-                              className="font-mono font-extrabold"
+                              className={`font-mono font-extrabold ${isTop3 ? "text-lg" : "text-sm"}`}
                               style={{
-                                fontSize: rank === 1 ? "20px" : rank <= 3 ? "17px" : "13px",
-                                color: ptsColor,
-                                textShadow: ptsShadow,
+                                color: isSelf ? "#06B6D4" : isTop3 ? nameColor : "#64748B",
+                                textShadow: isSelf ? "0 0 12px rgba(6,182,212,0.4)" : isTop3 ? `0 0 12px ${nameColor}80` : "none",
                               }}
                             >
                               {entry.totalPoints.toLocaleString()}
-                              <span
-                                className="font-normal ml-1"
-                                style={{ fontSize: "10px", color: isTop3 ? "rgba(255,255,255,0.25)" : "#2D2D42" }}
-                              >
-                                Pts
-                              </span>
+                              <span className="text-[10px] font-normal text-slate-600 ml-1">Pts</span>
                             </span>
                           </td>
                         </tr>
