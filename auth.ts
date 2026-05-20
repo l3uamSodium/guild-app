@@ -42,8 +42,19 @@ export const authOptions: NextAuthOptions = {
 
       // Query database dynamically on every check to get real-time Member status, role, and ID
       if (token.userId) {
+        // Verify if the User still exists in the database
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.userId as string },
+          select: { id: true },
+        });
+
+        if (!dbUser) {
+          // The user record was purged/deleted from the database! Invalidate the token.
+          return {};
+        }
+
         const member = await prisma.member.findUnique({
-          where: { userId: token.userId },
+          where: { userId: token.userId as string },
           select: { id: true, role: true, status: true },
         });
 
@@ -58,6 +69,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.user.id = (token.userId as string) ?? "";
       session.user.memberId = (token.memberId as string) ?? null;
+      session.user.memberStatus = (token.memberStatus as string) ?? null;
       session.user.role = (token.role as string) ?? null;
       return session;
     },
