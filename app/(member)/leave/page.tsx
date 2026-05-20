@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import LeaveClientPage from "./LeaveClientPage";
 
 export const metadata = {
-  title: "Request Leave",
+  title: "แจ้งพักกิจกรรม - ONIZUKA",
 };
 
 export default async function MemberLeavePage() {
@@ -15,6 +15,23 @@ export default async function MemberLeavePage() {
 
   // Route security: Only active members can view this page
   if (!session || !memberId || status !== "ACTIVE") {
+    redirect("/");
+  }
+
+  const member = await prisma.member.findUnique({
+    where: { id: memberId },
+    select: {
+      inGameName: true,
+      role: true,
+      user: {
+        select: {
+          image: true,
+        },
+      },
+    },
+  });
+
+  if (!member) {
     redirect("/");
   }
 
@@ -47,6 +64,11 @@ export default async function MemberLeavePage() {
       initialHistory={history}
       hasActiveSeason={!!currentSeason}
       currentSeasonMonthYear={currentSeason ? currentSeason.monthYear : null}
+      memberInfo={{
+        inGameName: member.inGameName,
+        role: member.role,
+        avatarUrl: member.user?.image,
+      }}
     />
   );
 }

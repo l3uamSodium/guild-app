@@ -49,6 +49,23 @@ export default async function LeaderboardPage({ searchParams }: LeaderboardPageP
     ? await getLeaderboard(memberId, selectedSeasonId)
     : [];
 
+  const member = await prisma.member.findUnique({
+    where: { id: memberId },
+    select: {
+      inGameName: true,
+      role: true,
+      user: {
+        select: {
+          image: true,
+        },
+      },
+    },
+  });
+
+  if (!member) {
+    redirect("/");
+  }
+
   const mappedSeasons = seasons.map((s) => ({
     id: s.id,
     monthYear: s.monthYear,
@@ -61,6 +78,11 @@ export default async function LeaderboardPage({ searchParams }: LeaderboardPageP
       selectedSeasonId={selectedSeasonId || ""}
       leaderboard={leaderboard}
       currentMemberId={memberId}
+      memberInfo={{
+        inGameName: member.inGameName,
+        role: member.role,
+        avatarUrl: member.user?.image,
+      }}
     />
   );
 }

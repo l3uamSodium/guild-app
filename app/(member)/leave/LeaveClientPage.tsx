@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { createLeaveRequest } from "@/app/actions/leave";
+import MemberNavbar from "@/components/features/MemberNavbar";
 
 interface LeaveHistoryItem {
   id: string;
@@ -16,12 +17,18 @@ interface LeaveClientPageProps {
   initialHistory: LeaveHistoryItem[];
   hasActiveSeason: boolean;
   currentSeasonMonthYear: string | null;
+  memberInfo: {
+    inGameName: string;
+    role: string;
+    avatarUrl: string | null;
+  };
 }
 
 export default function LeaveClientPage({
   initialHistory,
   hasActiveSeason,
   currentSeasonMonthYear,
+  memberInfo,
 }: LeaveClientPageProps) {
   const [history, setHistory] = useState<LeaveHistoryItem[]>(initialHistory);
   const [date, setDate] = useState("");
@@ -50,17 +57,17 @@ export default function LeaveClientPage({
     e.preventDefault();
 
     if (!hasActiveSeason) {
-      showNotification("error", "ไม่สามารถลาหยุดได้ เนื่องจากระบบกิลด์ไม่มีซีซั่นที่เปิดใช้งานในขณะนี้");
+      showNotification("error", "ไม่สามารถพักกิจกรรมได้ เนื่องจากระบบกิลด์ไม่มีซีซั่นที่เปิดใช้งานในขณะนี้");
       return;
     }
 
     if (!date) {
-      showNotification("error", "กรุณาระบุวันที่ต้องการลาหยุด");
+      showNotification("error", "กรุณาระบุวันที่ต้องการพักกิจกรรม");
       return;
     }
 
     if (!reason.trim()) {
-      showNotification("error", "กรุณากรอกเหตุผลในการลาหยุด");
+      showNotification("error", "กรุณากรอกเหตุผลในการพักกิจกรรม");
       return;
     }
 
@@ -68,7 +75,7 @@ export default function LeaveClientPage({
       try {
         const result = await createLeaveRequest(date, reason);
         if (result.success && result.leave) {
-          showNotification("success", "ส่งใบลาหยุดเรียบร้อยแล้ว! กรุณารอแอดมินอนุมัติ");
+          showNotification("success", "ส่งคำขอพักกิจกรรมเรียบร้อยแล้ว! กรุณารอแอดมินอนุมัติ");
           
           const newLeave: LeaveHistoryItem = {
             id: result.leave.id,
@@ -83,7 +90,7 @@ export default function LeaveClientPage({
           setReason("");
         }
       } catch (err: any) {
-        showNotification("error", err.message || "เกิดข้อผิดพลาดในการส่งใบลา");
+        showNotification("error", err.message || "เกิดข้อผิดพลาดในการส่งคำขอพักกิจกรรม");
       }
     });
   };
@@ -132,7 +139,7 @@ export default function LeaveClientPage({
               color: "#4ADE80",
             }}
           >
-            อนุมัติการลา
+            อนุมัติพักกิจกรรม
           </span>
         );
       case "REJECTED":
@@ -152,11 +159,17 @@ export default function LeaveClientPage({
   };
 
   return (
-    <main
-      className="min-h-screen relative overflow-hidden px-4 py-12 md:px-8"
-      style={{ background: "#08080F" }}
-    >
-      {/* Background gradients */}
+    <div className="min-h-screen flex flex-col" style={{ background: "#08080F" }}>
+      <MemberNavbar
+        avatarUrl={memberInfo.avatarUrl}
+        inGameName={memberInfo.inGameName}
+        role={memberInfo.role}
+      />
+
+      <main
+        className="flex-1 relative overflow-hidden px-4 py-12 md:px-8"
+      >
+        {/* Background gradients */}
       <div
         className="absolute inset-0"
         style={{
@@ -220,10 +233,10 @@ export default function LeaveClientPage({
                 WebkitTextFillColor: "transparent",
               }}
             >
-              REQUEST LEAVE
+              REQUEST BREAK
             </h1>
             <p style={{ color: "#8888A8", fontSize: "14px" }}>
-              ยื่นใบลาหยุดสำหรับกิจกรรมกิลด์หรือเวสประจำวันล่วงหน้า
+              แจ้งขอพักกิจกรรมกิลด์หรือเควสต์ประจำวันล่วงหน้า
             </p>
           </div>
 
@@ -264,7 +277,7 @@ export default function LeaveClientPage({
             <div className="space-y-6">
               <div className="space-y-2">
                 <h3 className="text-lg font-bold text-white tracking-wide">
-                  ใบลาหยุดกิลด์
+                  แจ้งพักกิจกรรมกิลด์
                 </h3>
                 {hasActiveSeason ? (
                   <p className="text-xs text-[#8888A8]">
@@ -280,7 +293,7 @@ export default function LeaveClientPage({
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <label className="text-xs font-semibold text-[#8888A8] uppercase tracking-wider block">
-                    วันที่ต้องการลา
+                    วันที่ต้องการพัก
                   </label>
                   <input
                     type="date"
@@ -297,7 +310,7 @@ export default function LeaveClientPage({
 
                 <div className="space-y-2">
                   <label className="text-xs font-semibold text-[#8888A8] uppercase tracking-wider block">
-                    เหตุผลในการลาหยุด
+                    เหตุผลในการพักกิจกรรม
                   </label>
                   <textarea
                     rows={4}
@@ -320,26 +333,26 @@ export default function LeaveClientPage({
                     boxShadow: "0 0 20px rgba(244,114,182,0.06)",
                   }}
                 >
-                  {isPending ? "กำลังส่งใบลา..." : "ส่งใบลาหยุด"}
+                  {isPending ? "กำลังส่งคำขอ..." : "แจ้งขอพักกิจกรรม"}
                 </button>
               </form>
             </div>
 
             <div className="pt-6 border-t border-border/40 text-xs text-[#8888A8] leading-relaxed mt-6">
-              * การลาหยุดกิลด์เมื่อได้รับอนุมัติแล้ว จะเว้นเว้นการถูกบันทึกขาดส่งเควส (Absent) ประจำวันนั้นๆ
+              * การพักกิจกรรมกิลด์เมื่อได้รับการอนุมัติ จะได้รับการยกเว้นจากการบันทึกขาดส่งเควสต์ประจำวันนั้น
             </div>
           </div>
 
           {/* History of Leave Requests (Right Column) */}
           <div className="md:col-span-2 space-y-4">
             <h3 className="text-sm font-semibold text-[#8888A8] uppercase tracking-wider">
-              ประวัติและสถานะใบลาของคุณในซีซั่นนี้
+              ประวัติและสถานะการขอพักกิจกรรมของคุณในซีซั่นนี้
             </h3>
 
             <div className="space-y-4 max-h-[560px] overflow-y-auto pr-1">
               {history.length === 0 ? (
                 <div className="p-12 text-center rounded-3xl border border-border/40 bg-surface/10 text-[#8888A8] text-sm">
-                  ไม่มีประวัติการลาหยุดในซีซั่นนี้
+                  ไม่มีประวัติการขอพักกิจกรรมในซีซั่นนี้
                 </div>
               ) : (
                 history.map((h) => (
@@ -374,6 +387,7 @@ export default function LeaveClientPage({
           </div>
         </div>
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

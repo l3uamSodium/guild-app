@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import MemberNavbar from "@/components/features/MemberNavbar";
 
 interface LeaderboardEntry {
   memberId: string;
@@ -27,6 +28,11 @@ interface LeaderboardClientPageProps {
   selectedSeasonId: string;
   leaderboard: LeaderboardEntry[];
   currentMemberId: string;
+  memberInfo: {
+    inGameName: string;
+    role: string;
+    avatarUrl: string | null;
+  };
 }
 
 export default function LeaderboardClientPage({
@@ -34,6 +40,7 @@ export default function LeaderboardClientPage({
   selectedSeasonId,
   leaderboard,
   currentMemberId,
+  memberInfo,
 }: LeaderboardClientPageProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -105,11 +112,17 @@ export default function LeaderboardClientPage({
   };
 
   return (
-    <main
-      className="min-h-screen relative overflow-hidden px-4 py-12 md:px-8"
-      style={{ background: "#08080F" }}
-    >
-      {/* Background gradients */}
+    <div className="min-h-screen flex flex-col" style={{ background: "#08080F" }}>
+      <MemberNavbar
+        avatarUrl={memberInfo.avatarUrl}
+        inGameName={memberInfo.inGameName}
+        role={memberInfo.role}
+      />
+
+      <main
+        className="flex-1 relative overflow-hidden px-4 py-12 md:px-8"
+      >
+        {/* Background gradients */}
       <div
         className="absolute inset-0"
         style={{
@@ -418,6 +431,7 @@ export default function LeaderboardClientPage({
           </div>
         )}
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

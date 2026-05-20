@@ -21,13 +21,13 @@ export async function createLeaveRequest(dateStr: string, reason: string) {
   }
 
   if (!dateStr || !reason.trim()) {
-    throw new Error("BAD_REQUEST: กรุณาระบุวันที่และเหตุผลการลา");
+    throw new Error("BAD_REQUEST: กรุณาระบุวันที่และเหตุผลการพักกิจกรรม");
   }
 
   // 2. ดึง Active Season ปัจจุบัน
   const activeSeason = await getCurrentSeason();
   if (!activeSeason) {
-    throw new Error("NO_ACTIVE_SEASON: ไม่สามารถส่งใบลาได้ เนื่องจากไม่มีกิลด์ซีซั่นเปิดอยู่ในขณะนี้");
+    throw new Error("NO_ACTIVE_SEASON: ไม่สามารถแจ้งพักกิจกรรมได้ เนื่องจากไม่มีกิลด์ซีซั่นเปิดอยู่ในขณะนี้");
   }
 
   // 3. ตรวจสอบว่ามีใบลาของวันนั้นในซีซั่นนั้นอยู่แล้วหรือไม่
@@ -45,7 +45,7 @@ export async function createLeaveRequest(dateStr: string, reason: string) {
   });
 
   if (leaveExists) {
-    throw new Error("ALREADY_EXISTS: คุณได้ยื่นใบลาสำหรับวันนี้ไว้แล้วในระบบ");
+    throw new Error("ALREADY_EXISTS: คุณได้ยื่นขอพักกิจกรรมสำหรับวันนี้ไว้แล้วในระบบ");
   }
 
   // 4. บันทึกใบลา
