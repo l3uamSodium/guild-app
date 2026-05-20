@@ -24,23 +24,26 @@ export const authOptions: NextAuthOptions = {
   // ─── Callbacks ──────────────────────────────────────────────────────────────
   callbacks: {
     async jwt({ token, user, account }) {
-      if (user && account) {
+      if (user) {
         token.userId = user.id;
+      }
 
-        // Sync discordId ตอน sign-in ครั้งแรก
-        if (account.provider === "discord" && account.providerAccountId) {
-          try {
-            await prisma.user.update({
-              where: { id: user.id },
-              data: { discordId: account.providerAccountId },
-            });
-          } catch {
-            // ignore
-          }
+      // Sync discordId ตอน sign-in ครั้งแรก
+      if (user && account && account.provider === "discord" && account.providerAccountId) {
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { discordId: account.providerAccountId },
+          });
+        } catch {
+          // ignore
         }
+      }
 
+      // Query database dynamically on every check to get real-time Member status, role, and ID
+      if (token.userId) {
         const member = await prisma.member.findUnique({
-          where: { userId: user.id },
+          where: { userId: token.userId },
           select: { id: true, role: true, status: true },
         });
 
@@ -48,6 +51,7 @@ export const authOptions: NextAuthOptions = {
         token.memberStatus = member?.status ?? null;
         token.role = member?.role ?? null;
       }
+
       return token;
     },
 
