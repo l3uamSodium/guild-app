@@ -2,26 +2,56 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
-import { useActionState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { submitOnboarding } from "./actions";
 
 export default function OnboardingPage() {
   const { data: session, update } = useSession();
   const router = useRouter();
-  const [state, action, isPending] = useActionState(submitOnboarding, null);
+  
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (state?.success) {
-      // Pass an empty object to update() to force NextAuth to perform a POST request and rewrite the JWT cookie
-      update({}).then(() => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    const formData = new FormData(e.currentTarget);
+    try {
+      const res = await submitOnboarding(null, formData);
+      
+      if (res?.error) {
+        setError(res.error);
+        // If they already registered previously, update session and send them to /pending anyway
+        if (res.success) {
+          try {
+            await update({});
+          } catch (e) {
+            console.error("Session update failed:", e);
+          }
+          window.location.href = "/pending";
+          return;
+        }
+        setIsLoading(false);
+      } else if (res?.success) {
+        try {
+          await update({});
+        } catch (e) {
+          console.error("Session update failed:", e);
+        }
         window.location.href = "/pending";
-      }).catch((err) => {
-        console.error("Session update failed, doing fallback redirect:", err);
-        window.location.href = "/pending";
-      });
+      } else {
+        setError("เกิดข้อผิดพลาดไม่ทราบสาเหตุ");
+        setIsLoading(false);
+      }
+    } catch (err: any) {
+      console.error("Onboarding client submit error:", err);
+      setError("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+      setIsLoading(false);
     }
-  }, [state, update]);
+  };
 
   return (
     <main
@@ -116,7 +146,7 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        <form action={action} className="w-full space-y-5">
+        <form onSubmit={handleSubmit} className="w-full space-y-5">
           <div className="space-y-2">
             <label htmlFor="inGameName" style={{ fontFamily: "var(--font-noto)", color: "#A0A0B8", fontSize: "12px", letterSpacing: "0.03em" }}>
               ชื่อในเกม (In-Game Name) <span style={{ color: "#FF2D78" }}>*</span>
@@ -157,7 +187,7 @@ export default function OnboardingPage() {
             />
           </div>
 
-          {state?.error && (
+          {error && (
             <div
               className="w-full px-4 py-3 rounded-xl text-sm text-center"
               style={{
@@ -167,14 +197,14 @@ export default function OnboardingPage() {
                 fontFamily: "var(--font-noto)",
               }}
             >
-              {state.error}
+              {error}
             </div>
           )}
 
           <div className="pt-2 space-y-3">
             <button
               type="submit"
-              disabled={isPending}
+              disabled={isLoading}
               className="group relative w-full flex items-center justify-center gap-3 px-8 py-[14px] rounded-xl overflow-hidden transition-all duration-300 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
               style={{
                 background: "rgba(255, 45, 120, 0.15)",
@@ -187,7 +217,7 @@ export default function OnboardingPage() {
                 style={{ background: "rgba(255,45,120,0.08)" }}
               />
               <span style={{ fontFamily: "var(--font-noto)", fontWeight: 500, fontSize: "14px", letterSpacing: "0.03em", color: "rgba(255,255,255,0.85)" }}>
-                {isPending ? "กำลังบันทึก..." : "ยืนยันข้อมูลสมาชิก"}
+                {isLoading ? "กำลังบันทึก..." : "ยืนยันข้อมูลสมาชิก"}
               </span>
             </button>
             <button
