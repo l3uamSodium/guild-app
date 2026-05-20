@@ -185,7 +185,7 @@ export default function PendingPage() {
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 w-full border-t border-white/[0.04] pt-5">
           <button
-            onClick={() => window.open("https://discord.gg/your-guild-link", "_blank")}
+            onClick={() => window.open("https://discord.com/channels/1493077690151075921/1493093393721589821", "_blank")}
             className="group relative w-full flex items-center justify-center gap-3 px-8 py-[14px] rounded-xl overflow-hidden transition-all duration-300 hover:brightness-110 active:scale-[0.98]"
             style={{
               background: "rgba(88, 101, 242, 0.12)",
