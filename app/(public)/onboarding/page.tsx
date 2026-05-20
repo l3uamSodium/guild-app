@@ -75,27 +75,28 @@ export default function OnboardingPage() {
             {session?.user?.image ? (
               <Image src={session.user.image} alt="Profile" width={80} height={80} className="object-cover w-full h-full" />
             ) : (
-              <span className="text-3xl">👤</span>
+              <svg className="w-8 h-8 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
             )}
           </div>
 
           <div className="text-center space-y-1 w-full">
             <h1
               style={{
-                fontFamily: "var(--font-cinzel)",
-                fontSize: "18px",
-                fontWeight: 900,
-                letterSpacing: "0.15em",
+                fontFamily: "var(--font-noto)",
+                fontSize: "16px",
+                fontWeight: 800,
+                letterSpacing: "0.05em",
                 background: "linear-gradient(135deg, #FFFFFF 20%, #FF6B9D 80%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 textTransform: "uppercase",
-                textShadow: "none",
               }}
             >
               {session?.user?.name || "PLAYER"}
             </h1>
-            <p style={{ color: "#3D3D5A", fontSize: "12px", marginTop: "6px" }}>
+            <p style={{ fontFamily: "var(--font-noto)", color: "#3D3D5A", fontSize: "12px", marginTop: "6px" }}>
               กรุณายืนยันข้อมูลสมาชิก
             </p>
           </div>
