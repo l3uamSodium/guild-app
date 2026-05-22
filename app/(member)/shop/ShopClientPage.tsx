@@ -566,13 +566,25 @@ export default function ShopClientPage({
     }
   };
 
-  const filteredItems = shopItems.filter((item) => {
-    const matchesTab = activeTab === "ALL" || item.type === activeTab;
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesTab && matchesSearch;
-  });
+  const filteredItems = shopItems
+    .filter((item) => {
+      const matchesTab = activeTab === "ALL" || item.type === activeTab;
+      const matchesSearch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesTab && matchesSearch;
+    })
+    .sort((a, b) => {
+      const isAClosed = a.type === "LUCKY_DRAW" && a.drawClosesAt && new Date(a.drawClosesAt).getTime() < Date.now();
+      const isAUnavailable = a.stock <= 0 || isAClosed;
+      
+      const isBClosed = b.type === "LUCKY_DRAW" && b.drawClosesAt && new Date(b.drawClosesAt).getTime() < Date.now();
+      const isBUnavailable = b.stock <= 0 || isBClosed;
+
+      if (isAUnavailable && !isBUnavailable) return 1;
+      if (!isAUnavailable && isBUnavailable) return -1;
+      return 0;
+    });
 
   const tabs = [
     { id: "ALL", label: "ทั้งหมด" },
