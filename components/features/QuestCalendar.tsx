@@ -155,14 +155,14 @@ export default function QuestCalendar({
       {/* Calendar Header */}
       <div className="flex items-center justify-between">
         <h3
-          className="text-md font-bold text-slate-100"
+          className="text-base font-bold text-slate-100"
           style={{ fontFamily: "var(--font-noto)" }}
         >
           ประวัติการทำเควสต์กิลด์ ประจำเดือน {MONTH_NAMES_TH[month - 1]} {year + 543}
         </h3>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+        <div className="flex flex-wrap items-center gap-3 text-[13px] text-slate-400">
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded bg-emerald-500/20 border border-emerald-500/40 inline-block" />
             <span>สำเร็จ</span>
@@ -190,7 +190,7 @@ export default function QuestCalendar({
             {WEEKDAYS_TH.map((wd, i) => (
               <div
                 key={wd}
-                className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider"
+                className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider"
                 style={{ fontFamily: "var(--font-noto)" }}
               >
                 {wd}
@@ -219,7 +219,7 @@ export default function QuestCalendar({
                     })
                   }
                   onMouseLeave={() => setHoveredDay(null)}
-                  className="aspect-square rounded-lg border transition-all duration-200 cursor-pointer flex items-center justify-center text-xs font-mono font-semibold"
+                  className="aspect-square rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center text-[13px] sm:text-sm font-mono font-semibold"
                   style={{
                     background: cell.bgStyle?.background,
                     borderColor: isHovered

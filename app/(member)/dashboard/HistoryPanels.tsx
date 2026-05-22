@@ -64,7 +64,7 @@ function LeaveRow({ item }: { item: LeaveItem }) {
       style={{ background: "rgba(255,255,255,0.01)", borderColor: "rgba(255,255,255,0.04)" }}
     >
       <div className="min-w-0">
-        <div className="text-xs font-semibold text-slate-300" style={{ fontFamily: "var(--font-noto)" }}>
+        <div className="text-[13px] font-semibold text-slate-300" style={{ fontFamily: "var(--font-noto)" }}>
           {fmtDate(item.date)}
         </div>
         <div className="text-[11px] text-slate-600 truncate mt-0.5" style={{ fontFamily: "var(--font-noto)" }}>
@@ -84,7 +84,7 @@ function RedeemRow({ item }: { item: RedeemItem }) {
       style={{ background: "rgba(255,255,255,0.01)", borderColor: "rgba(255,255,255,0.04)" }}
     >
       <div className="min-w-0">
-        <div className="text-xs font-semibold text-slate-300 truncate" style={{ fontFamily: "var(--font-noto)" }}>
+        <div className="text-[13px] font-semibold text-slate-300 truncate" style={{ fontFamily: "var(--font-noto)" }}>
           {item.itemName}
         </div>
         <div className="text-[11px] text-slate-600 mt-0.5 font-mono">
@@ -197,13 +197,13 @@ function PanelCard({
       {/* Panel header */}
       <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
         <div>
-          <div className="text-xs font-bold text-slate-300" style={{ fontFamily: "var(--font-noto)" }}>{title}</div>
-          <div className="text-[10px] text-slate-600 mt-0.5">{subtitle}</div>
+          <div className="text-[13px] font-bold text-slate-300" style={{ fontFamily: "var(--font-noto)" }}>{title}</div>
+          <div className="text-[11px] text-slate-600 mt-0.5">{subtitle}</div>
         </div>
         {!empty && (
           <button
             onClick={onViewAll}
-            className="px-3 py-1.5 rounded-lg text-[10px] font-semibold border transition-all duration-200 hover:brightness-110"
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all duration-200 hover:brightness-110"
             style={{
               fontFamily: "var(--font-noto)",
               background: "rgba(255,255,255,0.03)",
@@ -220,7 +220,7 @@ function PanelCard({
       <div className="flex-1 p-4 space-y-2">
         {empty ? (
           <div
-            className="py-10 text-center text-slate-600 text-xs"
+            className="py-10 text-center text-slate-600 text-[13px]"
             style={{ fontFamily: "var(--font-noto)" }}
           >
             {emptyText}

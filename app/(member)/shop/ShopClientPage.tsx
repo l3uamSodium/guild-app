@@ -330,14 +330,20 @@ function ShopCard({
   return (
     <div
       onClick={() => !disabled && onRedeem(item)}
-      className={`rounded-2xl border overflow-hidden flex flex-col transition-all duration-300 ${disabled ? "" : "card-hover-glow cursor-pointer"} ${disabled ? "" : isLucky ? "card-hover-glow-purple" : ""}`}
-      style={{
-        background: "rgba(10, 10, 20, 0.55)",
-        borderColor: isLucky ? `${accentAlpha}0.12)` : "rgba(255,255,255,0.06)",
-        backdropFilter: "blur(16px)",
-        ...(disabled ? { filter: "grayscale(0.5) brightness(0.65)", opacity: 0.6 } : {}),
-      }}
+      className={`premium-glass-panel rounded-2xl overflow-hidden flex flex-col relative ${disabled ? "" : "cursor-pointer"}`}
+      style={disabled ? { filter: "grayscale(0.6) brightness(0.7)", opacity: 0.7, pointerEvents: "none" } : {}}
     >
+      {/* Top accent for Lucky Draw */}
+      {isLucky && (
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px] z-10"
+          style={{
+            background: "linear-gradient(90deg, transparent 0%, rgba(192,132,252,0.8) 50%, transparent 100%)",
+            boxShadow: "0 0 12px rgba(192,132,252,0.6)"
+          }}
+        />
+      )}
+      
       {/* Image area */}
       <div
         className="h-44 relative flex items-center justify-center border-b overflow-hidden"
@@ -597,80 +603,89 @@ export default function ShopClientPage({
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 pt-28 pb-8 space-y-6 relative z-10">
 
-        {/* ── Header ──────────────────────────────────────────── */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h1
-              style={{
-                fontFamily: "var(--font-cinzel)",
-                fontSize: "clamp(22px, 4vw, 30px)",
-                fontWeight: 900,
-                letterSpacing: "0.15em",
-                background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textTransform: "uppercase",
-              }}
-            >
-              GUILD SHOP
-            </h1>
-            <p
-              style={{
-                fontFamily: "var(--font-noto)",
-                color: "#5B5B7A",
-                fontSize: "13px",
-                marginTop: "4px",
-              }}
-            >
-              ใช้แต้มกิลด์แลกของรางวัลพรีเมียมหรือสิทธิ์ลุ้นรับรางวัลใหญ่ประจำซีซัน
-            </p>
-          </div>
-
-          {/* Balance card */}
+        {/* ── Header Banner ──────────────────────────────────────────── */}
+        <div className="animate-fade-scale-in" style={{ animationDelay: '0ms' }}>
           <div
-            className="flex items-center gap-6 px-6 py-4 rounded-2xl border backdrop-blur-md flex-shrink-0"
+            className="relative p-6 sm:p-8 rounded-3xl border overflow-hidden transition-all duration-500 hover:shadow-[0_8px_32px_rgba(192,132,252,0.15)]"
             style={{
-              background: "rgba(10, 10, 20, 0.6)",
-              borderColor: "rgba(192, 132, 252, 0.15)",
-              boxShadow: "0 0 24px rgba(192,132,252,0.04)",
+              background: "linear-gradient(145deg, rgba(20,15,30,0.7) 0%, rgba(10,5,15,0.9) 100%)",
+              borderColor: "rgba(192, 132, 252, 0.25)",
+              backdropFilter: "blur(32px)",
             }}
           >
-            <div>
-              <div style={{ color: "#5B5B7A", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                แต้มคงเหลือ
+            {/* Purple top accent */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px]"
+              style={{
+                background: "linear-gradient(90deg, transparent 0%, rgba(192,132,252,0.8) 40%, rgba(6,182,212,0.6) 70%, transparent 100%)",
+                boxShadow: "0 0 20px rgba(192,132,252,0.4)"
+              }}
+            />
+            
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+              <div>
+                <h1
+                  style={{
+                    fontFamily: "var(--font-cinzel)",
+                    fontSize: "clamp(24px, 5vw, 36px)",
+                    fontWeight: 900,
+                    letterSpacing: "0.15em",
+                    background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    textTransform: "uppercase",
+                    textShadow: "0 4px 20px rgba(192,132,252,0.2)"
+                  }}
+                >
+                  GUILD SHOP
+                </h1>
+                <p
+                  style={{
+                    fontFamily: "var(--font-noto)",
+                    color: "#94A3B8",
+                    fontSize: "14px",
+                    marginTop: "6px",
+                  }}
+                >
+                  ใช้แต้มกิลด์แลกของรางวัลพรีเมียมหรือสิทธิ์ลุ้นรับรางวัลใหญ่ประจำซีซัน
+                </p>
               </div>
-              <div
-                className="text-2xl font-mono font-extrabold mt-0.5"
-                style={{
-                  color: "#06B6D4",
-                  textShadow: "0 0 20px rgba(6,182,212,0.3)",
-                }}
-              >
-                {pointsBalance.toLocaleString()}
-                <span className="text-xs font-normal text-slate-500 ml-1">Pts</span>
-              </div>
-            </div>
-            <div className="w-px h-10" style={{ background: "rgba(255,255,255,0.06)" }} />
-            <div>
-              <div style={{ color: "#5B5B7A", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                แลกแล้ว
-              </div>
-              <div className="text-lg font-mono font-bold text-slate-300 mt-0.5">
-                {totalRedeemed}
-                <span className="text-xs font-normal text-slate-600 ml-1">รายการ</span>
+
+              {/* Balance card */}
+              <div className="flex flex-col sm:flex-row items-center gap-6 p-5 rounded-2xl bg-black/40 border border-white/5 flex-shrink-0">
+                <div className="text-center sm:text-left">
+                  <div style={{ color: "#64748B", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>
+                    แต้มคงเหลือ
+                  </div>
+                  <div
+                    className="text-3xl font-mono font-black mt-1"
+                    style={{
+                      color: "#06B6D4",
+                      textShadow: "0 0 24px rgba(6,182,212,0.4)",
+                    }}
+                  >
+                    {pointsBalance.toLocaleString()}
+                    <span className="text-sm font-semibold text-slate-500 ml-1.5">Pts</span>
+                  </div>
+                </div>
+                <div className="hidden sm:block w-px h-12" style={{ background: "rgba(255,255,255,0.1)" }} />
+                <div className="w-full sm:w-auto h-px sm:hidden" style={{ background: "rgba(255,255,255,0.1)" }} />
+                <div className="text-center sm:text-left">
+                  <div style={{ color: "#64748B", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>
+                    แลกแล้ว
+                  </div>
+                  <div className="text-xl font-mono font-bold text-slate-200 mt-1">
+                    {totalRedeemed}
+                    <span className="text-xs font-semibold text-slate-500 ml-1.5">รายการ</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* ── Filter Bar ──────────────────────────────────────── */}
-        <div
-          className="p-4 rounded-2xl border backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-          style={{
-            background: "rgba(10, 10, 20, 0.5)",
-            borderColor: "rgba(255, 255, 255, 0.05)",
-          }}
-        >
+        <div className="premium-glass-panel p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-scale-in" style={{ animationDelay: '100ms' }}>
           {/* Tabs */}
           <div className="flex gap-1.5">
             {tabs.map((tab) => {
@@ -717,30 +732,28 @@ export default function ShopClientPage({
         </div>
 
         {/* ── Grid ────────────────────────────────────────────── */}
-        {filteredItems.length === 0 ? (
-          <div
-            className="p-16 text-center text-slate-600 rounded-2xl border"
-            style={{
-              background: "rgba(10, 10, 18, 0.3)",
-              borderColor: "rgba(255,255,255,0.04)",
-              fontFamily: "var(--font-noto)",
-            }}
-          >
-            ไม่พบของรางวัลในหมวดหมู่นี้
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-            {filteredItems.map((item) => (
-              <ShopCard
-                key={item.id}
-                item={item}
-                pointsBalance={pointsBalance}
-                onRedeem={(item) => setConfirmItem(item)}
-                isRedeeming={redeemingId === item.id}
-              />
-            ))}
-          </div>
-        )}
+        <div className="animate-fade-scale-in" style={{ animationDelay: '200ms' }}>
+          {filteredItems.length === 0 ? (
+            <div
+              className="p-16 text-center text-slate-400 rounded-3xl premium-glass-panel"
+              style={{ fontFamily: "var(--font-noto)" }}
+            >
+              ไม่พบของรางวัลในหมวดหมู่นี้
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {filteredItems.map((item) => (
+                <ShopCard
+                  key={item.id}
+                  item={item}
+                  pointsBalance={pointsBalance}
+                  onRedeem={(item) => setConfirmItem(item)}
+                  isRedeeming={redeemingId === item.id}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );

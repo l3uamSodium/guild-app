@@ -230,35 +230,35 @@ export default function LeaveClientPage({
       )}
 
       {/* Wrapper */}
-      <div className="relative z-10 max-w-5xl mx-auto space-y-8">
+      <div className="relative z-10 max-w-7xl w-full mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="animate-fade-scale-in flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ animationDelay: '0ms' }}>
           <div className="space-y-1">
             <h1
+              className="text-3xl sm:text-4xl font-extrabold truncate tracking-tight"
               style={{
                 fontFamily: "var(--font-cinzel)",
-                fontSize: "26px",
-                fontWeight: 900,
-                letterSpacing: "0.08em",
-                background: "linear-gradient(135deg, #FFFFFF 20%, #F472B6 80%)",
+                background: "linear-gradient(135deg, #F472B6 0%, #E879F9 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
+                textShadow: "0 2px 10px rgba(244,114,182,0.4)"
               }}
             >
               REQUEST BREAK
             </h1>
-            <p style={{ color: "#8888A8", fontSize: "14px" }}>
+            <p style={{ color: "#8888A8", fontSize: "14px", marginTop: "4px", fontFamily: "var(--font-noto)" }}>
               แจ้งขอพักกิจกรรมกิลด์หรือเควสต์ประจำวันล่วงหน้า
             </p>
           </div>
         </div>
 
         {/* Content Body */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 auto-rows-auto gap-6">
           {/* Submit Leave Form (Left Column) */}
           <div
-            className="md:col-span-1 p-8 rounded-3xl overflow-hidden relative flex flex-col justify-between"
+            className="lg:col-span-5 p-8 rounded-3xl overflow-hidden relative flex flex-col justify-between animate-fade-scale-in"
             style={{
+              animationDelay: '100ms',
               background: "rgba(26, 26, 36, 0.4)",
               border: "1px solid rgba(244, 114, 182, 0.15)",
               backdropFilter: "blur(24px)",
@@ -342,23 +342,34 @@ export default function LeaveClientPage({
           </div>
 
           {/* History of Leave Requests (Right Column) */}
-          <div className="md:col-span-2 space-y-4">
-            <h3 className="text-sm font-semibold text-[#8888A8] uppercase tracking-wider">
-              ประวัติและสถานะการขอพักกิจกรรมของคุณในซีซั่นนี้
-            </h3>
+          <div className="lg:col-span-7 flex flex-col gap-6 animate-fade-scale-in" style={{ animationDelay: '200ms' }}>
+            <div className="flex items-center gap-3 px-1">
+              <div className="w-1.5 h-5 rounded-full bg-gradient-to-b from-pink-400 to-rose-600" />
+              <h3 className="text-base font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-noto)" }}>
+                ประวัติและสถานะการขอพักกิจกรรมของคุณในซีซั่นนี้
+              </h3>
+            </div>
 
-            <div className="space-y-4 max-h-[560px] overflow-y-auto pr-1">
+            <div className="space-y-4 max-h-[560px] overflow-y-auto pr-2">
               {history.length === 0 ? (
-                <div className="p-12 text-center rounded-3xl border border-border/40 bg-surface/10 text-[#8888A8] text-sm">
+                <div 
+                  className="p-12 text-center rounded-3xl border text-[#8888A8] text-sm"
+                  style={{
+                    background: "rgba(30,15,25,0.2)",
+                    borderColor: "rgba(244, 114, 182, 0.1)",
+                    fontFamily: "var(--font-noto)",
+                  }}
+                >
                   ไม่มีประวัติการขอพักกิจกรรมในซีซั่นนี้
                 </div>
               ) : (
                 history.map((h) => (
                   <div
                     key={h.id}
-                    className="p-6 rounded-2xl border bg-surface/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300 hover:bg-surface/30"
+                    className="p-6 rounded-2xl border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-500 hover:shadow-[0_4px_20px_rgba(244,114,182,0.1)] group"
                     style={{
-                      borderColor: "rgba(228, 228, 240, 0.08)",
+                      background: "linear-gradient(145deg, rgba(30,15,25,0.4) 0%, rgba(15,5,10,0.6) 100%)",
+                      borderColor: "rgba(244, 114, 182, 0.15)",
                     }}
                   >
                     <div className="space-y-2">

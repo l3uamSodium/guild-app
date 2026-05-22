@@ -252,7 +252,7 @@ export default async function MemberDashboardPage() {
                 <div className="space-y-4 min-w-0 md:col-span-1">
                   <div className="flex items-center gap-3 flex-wrap">
                     <span
-                      className="px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-widest uppercase border"
+                      className="px-2.5 py-0.5 rounded-md text-[11px] font-bold tracking-widest uppercase border"
                       style={{
                         background:
                           member.memberType === "WAR"
@@ -269,19 +269,19 @@ export default async function MemberDashboardPage() {
                       {member.memberType === "WAR" ? "สายวอร์" : "สมาชิกปกติ"}
                     </span>
 
-                    <span className="text-[11px] text-slate-400 font-mono">
+                    <span className="text-xs text-slate-400 font-mono">
                       เข้าร่วม {joinDate}
                     </span>
                   </div>
 
                   <h1
-                    className="text-3xl sm:text-4xl font-extrabold text-white truncate drop-shadow-md tracking-tight"
+                    className="text-3xl sm:text-[40px] font-extrabold text-white truncate drop-shadow-md tracking-tight"
                     style={{ fontFamily: "var(--font-noto)" }}
                   >
                     {member.inGameName}
                   </h1>
 
-                  <div className="flex flex-col gap-1 text-sm text-slate-400" style={{ fontFamily: "var(--font-noto)" }}>
+                  <div className="flex flex-col gap-1.5 text-sm text-slate-400 mt-2" style={{ fontFamily: "var(--font-noto)" }}>
                     <div className="flex items-center gap-2">
                       <span className="text-slate-500">ชื่อเล่น</span>
                       <span
@@ -308,7 +308,7 @@ export default async function MemberDashboardPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-slate-300 font-medium" style={{ fontFamily: "var(--font-noto)" }}>ความสำเร็จเควสต์</span>
-                      <span className="text-emerald-400 font-mono font-bold">{questSuccessRate}%</span>
+                      <span className="text-emerald-400 font-mono font-bold text-sm">{questSuccessRate}%</span>
                     </div>
                     <div className="w-full bg-black/40 rounded-full h-1.5 border border-white/5">
                       <div className="bg-gradient-to-r from-emerald-500 to-emerald-300 h-1.5 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.5)] transition-all duration-1000" style={{ width: `${questSuccessRate}%` }} />
@@ -320,7 +320,7 @@ export default async function MemberDashboardPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-slate-300 font-medium" style={{ fontFamily: "var(--font-noto)" }}>การเข้าร่วมวอร์</span>
-                        <span className="text-purple-400 font-mono font-bold">{warAttendanceRate}%</span>
+                        <span className="text-purple-400 font-mono font-bold text-sm">{warAttendanceRate}%</span>
                       </div>
                       <div className="w-full bg-black/40 rounded-full h-1.5 border border-white/5">
                         <div className="bg-gradient-to-r from-purple-500 to-purple-300 h-1.5 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)] transition-all duration-1000" style={{ width: `${warAttendanceRate}%` }} />
@@ -329,7 +329,7 @@ export default async function MemberDashboardPage() {
                   )}
 
                   {/* Leave Days */}
-                  <div className="flex items-center justify-between text-xs pt-1">
+                  <div className="flex items-center justify-between text-xs pt-2">
                     <span className="text-slate-400 font-medium" style={{ fontFamily: "var(--font-noto)" }}>ใช้วันพักกิจกรรมไปแล้ว</span>
                     <div className="flex items-center gap-1.5">
                       <span className="text-amber-400 font-mono font-bold text-sm">{approvedLeaves}</span>
@@ -357,7 +357,7 @@ export default async function MemberDashboardPage() {
                       </div>
                     )}
 
-                    <span className={`text-[10px] ${rankConfig.labelColor} uppercase tracking-widest mb-1.5 relative z-10 font-bold`}>อันดับปัจจุบัน</span>
+                    <span className={`text-[11px] ${rankConfig.labelColor} uppercase tracking-[0.2em] mb-1.5 relative z-10 font-bold`}>อันดับปัจจุบัน</span>
                     <span
                       className="text-5xl font-black font-mono relative z-10 transition-transform duration-300 group-hover:scale-110"
                       style={{
