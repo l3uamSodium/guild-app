@@ -330,27 +330,31 @@ function ShopCard({
   return (
     <div
       onClick={() => !disabled && onRedeem(item)}
-      className={`premium-glass-panel rounded-2xl overflow-hidden flex flex-col relative ${disabled ? "" : "cursor-pointer"}`}
-      style={disabled ? { filter: "grayscale(0.6) brightness(0.7)", opacity: 0.7, pointerEvents: "none" } : {}}
+      className={`rounded-3xl overflow-hidden flex flex-col relative transition-all duration-300 ${disabled ? "" : "cursor-pointer hover:-translate-y-1 hover:shadow-2xl z-10"}`}
+      style={{
+        background: "rgba(20, 20, 30, 0.4)",
+        border: "1px solid",
+        borderColor: isLucky ? `${accentAlpha}0.25)` : "rgba(255, 255, 255, 0.06)",
+        backdropFilter: "blur(20px)",
+        ...(isLucky && !disabled ? { boxShadow: `0 8px 32px rgba(0,0,0,0.4), 0 0 20px ${accentAlpha}0.1)` } : {}),
+        ...(disabled ? { filter: "grayscale(0.6) brightness(0.7)", opacity: 0.7, pointerEvents: "none" } : {}),
+      }}
     >
       {/* Top accent for Lucky Draw */}
       {isLucky && (
         <div
-          className="absolute top-0 left-0 right-0 h-[2px] z-10"
+          className="absolute top-0 left-0 right-0 h-[3px] z-20"
           style={{
-            background: "linear-gradient(90deg, transparent 0%, rgba(192,132,252,0.8) 50%, transparent 100%)",
-            boxShadow: "0 0 12px rgba(192,132,252,0.6)"
+            background: "linear-gradient(90deg, transparent 0%, rgba(192,132,252,0.9) 50%, transparent 100%)",
+            boxShadow: "0 0 16px rgba(192,132,252,0.8)"
           }}
         />
       )}
       
       {/* Image area */}
       <div
-        className="h-44 relative flex items-center justify-center border-b overflow-hidden"
-        style={{
-          background: "rgba(255,255,255,0.01)",
-          borderColor: "rgba(255,255,255,0.04)",
-        }}
+        className="h-48 relative flex items-center justify-center overflow-hidden"
+        style={{ background: "rgba(0,0,0,0.3)" }}
       >
         {item.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -379,11 +383,11 @@ function ShopCard({
         {/* Badges */}
         {isLucky && (
           <span
-            className="absolute top-3 left-3 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-widest uppercase border"
+            className="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase z-10"
             style={{
-              background: "rgba(192,132,252,0.12)",
-              borderColor: "rgba(192,132,252,0.3)",
-              color: "#C084FC",
+              background: "rgba(192,132,252,0.9)",
+              color: "#FFF",
+              boxShadow: "0 2px 10px rgba(192,132,252,0.4)",
               fontFamily: "var(--font-noto)",
             }}
           >
@@ -391,11 +395,11 @@ function ShopCard({
           </span>
         )}
         <span
-          className="absolute top-3 right-3 px-2 py-0.5 rounded-md text-[9px] font-mono font-bold border"
+          className="absolute top-3 right-3 px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold z-10"
           style={{
-            background: outOfStock ? "rgba(239,68,68,0.12)" : "rgba(255,255,255,0.03)",
-            borderColor: outOfStock ? "rgba(239,68,68,0.3)" : "rgba(255,255,255,0.07)",
-            color: outOfStock ? "#EF4444" : "#64748B",
+            background: outOfStock ? "rgba(239,68,68,0.9)" : "rgba(0,0,0,0.6)",
+            color: "#FFF",
+            backdropFilter: "blur(8px)",
           }}
         >
           {outOfStock ? "หมด" : `x${item.stock}`}
@@ -403,10 +407,10 @@ function ShopCard({
       </div>
 
       {/* Content */}
-      <div className="p-4 flex-1 flex flex-col gap-4">
+      <div className="p-5 flex-1 flex flex-col gap-4">
         <div className="space-y-1.5">
           <h3
-            className="font-bold text-sm text-slate-100 line-clamp-1"
+            className="font-bold text-[13px] text-slate-100 line-clamp-1"
             style={{ fontFamily: "var(--font-noto)" }}
           >
             {item.name}
@@ -443,14 +447,14 @@ function ShopCard({
               ราคา
             </span>
             <span
-              className="text-xl font-extrabold font-mono"
+              className="text-lg font-extrabold font-mono"
               style={{
                 color: accentColor,
                 textShadow: `0 0 20px ${accentAlpha}0.3)`,
               }}
             >
               {item.price.toLocaleString()}
-              <span className="text-[11px] font-normal text-slate-600 ml-1">Pts</span>
+              <span className="text-[10px] font-normal text-slate-600 ml-1">Pts</span>
             </span>
           </div>
 
@@ -603,89 +607,36 @@ export default function ShopClientPage({
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 pt-28 pb-8 space-y-6 relative z-10">
 
-        {/* ── Header Banner ──────────────────────────────────────────── */}
-        <div className="animate-fade-scale-in" style={{ animationDelay: '0ms' }}>
-          <div
-            className="relative p-6 sm:p-8 rounded-3xl border overflow-hidden transition-all duration-500 hover:shadow-[0_8px_32px_rgba(192,132,252,0.15)]"
+        {/* ── Header ──────────────────────────────────────────── */}
+        <div className="flex flex-col gap-2 animate-fade-scale-in" style={{ animationDelay: '0ms' }}>
+          <h1
             style={{
-              background: "linear-gradient(145deg, rgba(20,15,30,0.7) 0%, rgba(10,5,15,0.9) 100%)",
-              borderColor: "rgba(192, 132, 252, 0.25)",
-              backdropFilter: "blur(32px)",
+              fontFamily: "var(--font-cinzel)",
+              fontSize: "clamp(28px, 5vw, 42px)",
+              fontWeight: 900,
+              letterSpacing: "0.15em",
+              background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              textTransform: "uppercase",
+              textShadow: "0 4px 20px rgba(192,132,252,0.2)"
             }}
           >
-            {/* Purple top accent */}
-            <div
-              className="absolute top-0 left-0 right-0 h-[2px]"
-              style={{
-                background: "linear-gradient(90deg, transparent 0%, rgba(192,132,252,0.8) 40%, rgba(6,182,212,0.6) 70%, transparent 100%)",
-                boxShadow: "0 0 20px rgba(192,132,252,0.4)"
-              }}
-            />
-            
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-              <div>
-                <h1
-                  style={{
-                    fontFamily: "var(--font-cinzel)",
-                    fontSize: "clamp(24px, 5vw, 36px)",
-                    fontWeight: 900,
-                    letterSpacing: "0.15em",
-                    background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    textTransform: "uppercase",
-                    textShadow: "0 4px 20px rgba(192,132,252,0.2)"
-                  }}
-                >
-                  GUILD SHOP
-                </h1>
-                <p
-                  style={{
-                    fontFamily: "var(--font-noto)",
-                    color: "#94A3B8",
-                    fontSize: "14px",
-                    marginTop: "6px",
-                  }}
-                >
-                  ใช้แต้มกิลด์แลกของรางวัลพรีเมียมหรือสิทธิ์ลุ้นรับรางวัลใหญ่ประจำซีซัน
-                </p>
-              </div>
-
-              {/* Balance card */}
-              <div className="flex flex-col sm:flex-row items-center gap-6 p-5 rounded-2xl bg-black/40 border border-white/5 flex-shrink-0">
-                <div className="text-center sm:text-left">
-                  <div style={{ color: "#64748B", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>
-                    แต้มคงเหลือ
-                  </div>
-                  <div
-                    className="text-3xl font-mono font-black mt-1"
-                    style={{
-                      color: "#06B6D4",
-                      textShadow: "0 0 24px rgba(6,182,212,0.4)",
-                    }}
-                  >
-                    {pointsBalance.toLocaleString()}
-                    <span className="text-sm font-semibold text-slate-500 ml-1.5">Pts</span>
-                  </div>
-                </div>
-                <div className="hidden sm:block w-px h-12" style={{ background: "rgba(255,255,255,0.1)" }} />
-                <div className="w-full sm:w-auto h-px sm:hidden" style={{ background: "rgba(255,255,255,0.1)" }} />
-                <div className="text-center sm:text-left">
-                  <div style={{ color: "#64748B", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>
-                    แลกแล้ว
-                  </div>
-                  <div className="text-xl font-mono font-bold text-slate-200 mt-1">
-                    {totalRedeemed}
-                    <span className="text-xs font-semibold text-slate-500 ml-1.5">รายการ</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+            GUILD SHOP
+          </h1>
+          <p
+            style={{
+              fontFamily: "var(--font-noto)",
+              color: "#94A3B8",
+              fontSize: "15px",
+            }}
+          >
+            ใช้แต้มกิลด์แลกของรางวัลพรีเมียมหรือสิทธิ์ลุ้นรับรางวัลใหญ่ประจำซีซัน
+          </p>
         </div>
 
         {/* ── Filter Bar ──────────────────────────────────────── */}
-        <div className="premium-glass-panel p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-scale-in" style={{ animationDelay: '100ms' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-scale-in" style={{ animationDelay: '100ms' }}>
           {/* Tabs */}
           <div className="flex gap-1.5">
             {tabs.map((tab) => {
