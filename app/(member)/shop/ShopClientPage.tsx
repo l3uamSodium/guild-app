@@ -40,11 +40,24 @@ function RedeemModal({
   item: ShopItemData;
   currentBalance: number;
   isRedeeming: boolean;
-  onConfirm: () => void;
+  onConfirm: (quantity: number) => void;
   onCancel: () => void;
 }) {
-  const remaining = currentBalance - item.price;
+  const [quantity, setQuantity] = useState(1);
+  const maxQtyByPoints = Math.floor(currentBalance / item.price);
+  const maxQty = Math.min(item.stock, maxQtyByPoints > 0 ? maxQtyByPoints : 1);
+
+  const totalPrice = item.price * quantity;
+  const remaining = currentBalance - totalPrice;
   const isLucky = item.type === "LUCKY_DRAW";
+
+  const handleIncrease = () => {
+    if (quantity < maxQty) setQuantity((q) => q + 1);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) setQuantity((q) => q - 1);
+  };
 
   useEffect(() => {
     // Lock body scroll
@@ -143,19 +156,33 @@ function RedeemModal({
             </div>
           </div>
 
+          {/* Quantity selector */}
+          <div className="flex items-center justify-between mt-2" style={{ fontFamily: "var(--font-noto)" }}>
+            <span className="text-sm text-slate-300 font-semibold">จำนวน</span>
+            <div className="flex items-center gap-3">
+              <button onClick={handleDecrease} disabled={quantity <= 1 || isRedeeming} className="w-8 h-8 rounded-lg border flex items-center justify-center text-slate-400 disabled:opacity-50 hover:bg-white/5 transition-colors" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" /></svg>
+              </button>
+              <span className="text-slate-100 font-mono font-bold w-6 text-center">{quantity}</span>
+              <button onClick={handleIncrease} disabled={quantity >= maxQty || isRedeeming} className="w-8 h-8 rounded-lg border flex items-center justify-center text-slate-400 disabled:opacity-50 hover:bg-white/5 transition-colors" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+              </button>
+            </div>
+          </div>
+
           {/* Points calculation */}
-          <div className="space-y-2">
+          <div className="space-y-2 pt-2">
             <div className="flex justify-between items-center text-xs" style={{ fontFamily: "var(--font-noto)" }}>
               <span className="text-slate-500">แต้มปัจจุบัน</span>
               <span className="font-mono font-bold text-cyan-400">{currentBalance.toLocaleString()} Pts</span>
             </div>
             <div className="flex justify-between items-center text-xs" style={{ fontFamily: "var(--font-noto)" }}>
-              <span className="text-slate-500">ราคาแลก</span>
+              <span className="text-slate-500">รวมราคาแลก</span>
               <span
                 className="font-mono font-bold"
                 style={{ color: isLucky ? "#C084FC" : "#FF6B9D" }}
               >
-                - {item.price.toLocaleString()} Pts
+                - {totalPrice.toLocaleString()} Pts
               </span>
             </div>
             <div
@@ -193,7 +220,7 @@ function RedeemModal({
             ยกเลิก
           </button>
           <button
-            onClick={onConfirm}
+            onClick={() => onConfirm(quantity)}
             disabled={isRedeeming}
             className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
             style={{
@@ -238,7 +265,7 @@ function Toast({
 }) {
   return (
     <div
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl border backdrop-blur-xl shadow-2xl animate-slide-in-right"
+      className="flex items-center gap-3 px-5 py-3.5 rounded-xl border backdrop-blur-xl shadow-2xl animate-slide-in-right"
       style={{
         background: type === "success" ? "rgba(8, 20, 14, 0.95)" : "rgba(20, 8, 8, 0.95)",
         borderColor: type === "success" ? "rgba(16,185,129,0.4)" : "rgba(239,68,68,0.4)",
@@ -479,18 +506,23 @@ export default function ShopClientPage({
   const [searchQuery, setSearchQuery] = useState("");
   const [redeemingId, setRedeemingId] = useState<string | null>(null);
   const [confirmItem, setConfirmItem] = useState<ShopItemData | null>(null);
-  const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  
+  type NotificationType = { id: number; type: "success" | "error"; message: string };
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   const showNotification = (type: "success" | "error", message: string) => {
-    setNotification({ type, message });
-    setTimeout(() => setNotification(null), 4000);
+    const id = Date.now() + Math.random();
+    setNotifications((prev) => [...prev, { id, type, message }]);
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, 4000);
   };
 
-  const handleConfirmRedeem = async () => {
+  const handleConfirmRedeem = async (quantity: number) => {
     if (!confirmItem) return;
     setRedeemingId(confirmItem.id);
     try {
-      const res = await redeemItem(confirmItem.id);
+      const res = await redeemItem(confirmItem.id, quantity);
       setConfirmItem(null);
       if (res.success) {
         showNotification(
@@ -541,7 +573,13 @@ export default function ShopClientPage({
       />
 
       {/* Toast */}
-      {notification && <Toast type={notification.type} message={notification.message} />}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
+        {notifications.map((n) => (
+          <div key={n.id} className="pointer-events-auto">
+            <Toast type={n.type} message={n.message} />
+          </div>
+        ))}
+      </div>
 
       {/* Confirm Modal */}
       {confirmItem && (

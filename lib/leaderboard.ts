@@ -140,25 +140,11 @@ export async function getLeaderboard(
     return a.inGameName.localeCompare(b.inGameName);
   });
 
-  // 8. Assign Standard Competitive Ranks (1, 1, 3...)
-  let currentRank = 1;
-  let prevPoints: number | null = null;
-  let rankIncrement = 1;
-
+  // 8. Assign Sequential Ranks (1, 2, 3...)
   const rankedEntries: LeaderboardEntry[] = entries.map((entry, index) => {
-    if (prevPoints !== null) {
-      if (entry.totalPoints === prevPoints) {
-        rankIncrement++;
-      } else {
-        currentRank += rankIncrement;
-        rankIncrement = 1;
-      }
-    }
-    prevPoints = entry.totalPoints;
-
     return {
       ...entry,
-      rank: currentRank,
+      rank: index + 1,
     };
   });
 

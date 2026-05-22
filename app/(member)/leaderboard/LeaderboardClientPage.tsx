@@ -340,7 +340,7 @@ export default function LeaderboardClientPage({
                         วอร์
                       </th>
                       <th className="p-4 pr-6 text-[10px] font-bold text-slate-600 uppercase tracking-widest text-right w-36">
-                        คะแนนสุทธิ
+                        คะแนนสะสม
                       </th>
                     </tr>
                   </thead>

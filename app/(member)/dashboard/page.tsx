@@ -161,21 +161,20 @@ export default async function MemberDashboardPage() {
 
         {/* ── Welcome Banner ─────────────────────────────────── */}
         <div
-          className="relative p-6 sm:p-8 rounded-2xl border overflow-hidden"
-          style={{
-            background: "rgba(255, 255, 255, 0.025)",
-            borderColor: "rgba(255, 45, 120, 0.2)",
-            backdropFilter: "blur(24px)",
-            boxShadow: "0 4px 24px rgba(255, 45, 120, 0.08)",
-          }}
+          className="relative p-6 sm:p-10 rounded-3xl border overflow-hidden premium-glass-panel"
         >
           {/* Pink top accent */}
           <div
-            className="absolute top-0 left-0 right-0 h-[1px]"
+            className="absolute top-0 left-0 right-0 h-[2px]"
             style={{
-              background: "linear-gradient(90deg, transparent 0%, rgba(255,45,120,0.6) 40%, rgba(192,132,252,0.4) 70%, transparent 100%)",
+              background: "linear-gradient(90deg, transparent 0%, rgba(255,45,120,0.8) 40%, rgba(192,132,252,0.8) 70%, transparent 100%)",
+              boxShadow: "0 0 15px rgba(255, 45, 120, 0.5)",
             }}
           />
+
+          {/* Premium Ambient Glow */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-fuchsia-600/20 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-cyan-600/10 rounded-full blur-[80px] pointer-events-none" />
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 min-w-0">
@@ -229,21 +228,25 @@ export default async function MemberDashboardPage() {
 
             {/* Rank Badge */}
             <div
-              className="flex-shrink-0 px-7 py-5 rounded-2xl border flex flex-col items-center justify-center"
+              className="flex-shrink-0 px-8 py-6 rounded-2xl border flex flex-col items-center justify-center relative overflow-hidden group transition-all duration-300"
               style={{
-                background: "rgba(255,255,255,0.03)",
-                borderColor: "rgba(255,255,255,0.12)",
-                minWidth: "130px",
-                boxShadow: "0 2px 12px rgba(0,0,0,0.2)",
+                background: "linear-gradient(145deg, rgba(30, 30, 45, 0.7), rgba(15, 15, 25, 0.9))",
+                borderColor: "rgba(192, 132, 252, 0.3)",
+                minWidth: "140px",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)",
               }}
             >
-              <span className="text-[10px] text-slate-600 uppercase tracking-widest mb-1">อันดับ</span>
+              {/* Inner animated glow */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <span className="text-[11px] text-purple-300/70 uppercase tracking-[0.2em] mb-2 font-semibold relative z-10">อันดับ</span>
               <span
-                className="text-3xl font-black font-mono"
+                className="text-4xl font-black font-mono relative z-10"
                 style={{
-                  background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
+                  background: "linear-gradient(135deg, #FFFFFF 0%, #E8B4F8 50%, #C084FC 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
+                  filter: "drop-shadow(0 4px 8px rgba(192, 132, 252, 0.25))",
                 }}
               >
                 {rank}

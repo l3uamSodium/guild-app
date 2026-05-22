@@ -10,7 +10,8 @@ import type { ShopItem } from "@/generated/prisma/client";
  * Safely handles normal items and lucky draw entries.
  */
 export async function redeemItem(
-  itemId: string
+  itemId: string,
+  quantity: number = 1
 ): Promise<{ success: boolean; log?: any; error?: string }> {
   try {
     // 1. Authenticate user
@@ -31,12 +32,16 @@ export async function redeemItem(
         FOR UPDATE
       `;
 
+      if (quantity < 1 || !Number.isInteger(quantity) || quantity > 100) {
+        throw new Error("INVALID_QUANTITY");
+      }
+
       // B. Decrement inventory stock atomically using raw SQL (concurrency lock)
       // Double check table case and capitalization (Prisma defaults to PascalCase table names like "ShopItem")
       const updatedItems = await tx.$queryRaw<ShopItem[]>`
         UPDATE "ShopItem"
-        SET stock = stock - 1
-        WHERE id = ${itemId} AND stock > 0 AND "isActive" = true
+        SET stock = stock - ${quantity}
+        WHERE id = ${itemId} AND stock >= ${quantity} AND "isActive" = true
         RETURNING *
       `;
 
@@ -113,32 +118,38 @@ export async function redeemItem(
       const spent = redeemLogs.reduce((sum, log) => sum + log.pointsSpent, 0);
       const totalPoints = earned - spent;
 
+      const totalPrice = item.price * quantity;
+
       // E. Verify sufficient balance
-      if (totalPoints < item.price) {
+      if (totalPoints < totalPrice) {
         throw new Error("INSUFFICIENT_POINTS");
       }
 
       // F. Create Redeem Log
-      const log = await tx.redeemLog.create({
-        data: {
-          memberId,
-          itemId: item.id,
-          pointsSpent: item.price,
-          status: "PENDING",
-        },
+      const logs = [];
+      const redeemEntries = Array.from({ length: quantity }).map(() => ({
+        memberId,
+        itemId: item.id,
+        pointsSpent: item.price,
+        status: "PENDING" as const,
+      }));
+      
+      await tx.redeemLog.createMany({
+        data: redeemEntries,
       });
 
       // G. If lucky draw, create LuckyDrawEntry
       if (item.type === "LUCKY_DRAW") {
-        await tx.luckyDrawEntry.create({
-          data: {
-            memberId,
-            itemId: item.id,
-          },
+        const luckyDrawEntries = Array.from({ length: quantity }).map(() => ({
+          memberId,
+          itemId: item.id,
+        }));
+        await tx.luckyDrawEntry.createMany({
+          data: luckyDrawEntries,
         });
       }
 
-      return { success: true, log };
+      return { success: true, log: { quantity } };
     });
 
     // 3. Revalidate paths
@@ -157,6 +168,9 @@ export async function redeemItem(
     }
     if (error.message === "DRAW_CLOSED") {
       return { success: false, error: "DRAW_CLOSED" };
+    }
+    if (error.message === "INVALID_QUANTITY") {
+      return { success: false, error: "INVALID_QUANTITY" };
     }
     return { success: false, error: "TRANSACTION_FAILED" };
   }
