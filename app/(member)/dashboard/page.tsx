@@ -113,12 +113,78 @@ export default async function MemberDashboardPage() {
 
   // 8. Fetch Leaderboard Rank
   let rank = "-";
+  let numericRank = 0;
   if (currentSeason) {
     const leaderboard = await getLeaderboard(memberId, currentSeason.id);
     const myRankEntry = leaderboard.find((e) => e.memberId === memberId);
     if (myRankEntry) {
-      rank = `#${myRankEntry.rank}`;
+      numericRank = myRankEntry.rank;
+      rank = `#${numericRank}`;
     }
+  }
+
+  let rankConfig = {
+    bg: "rgba(255,255,255,0.02)",
+    border: "rgba(192,132,252,0.2)",
+    shadow: "0 4px 20px rgba(0,0,0,0.3)",
+    gradient: "from-purple-500/10 to-pink-500/10",
+    textGradient: "linear-gradient(135deg, #FFFFFF 20%, #E879F9 80%)",
+    textShadow: "drop-shadow(0 2px 8px rgba(192,132,252,0.3))",
+    labelColor: "text-purple-300/80",
+    icon: null as React.ReactNode | null,
+    animateClass: ""
+  };
+
+  if (numericRank === 1) {
+    rankConfig = {
+      bg: "rgba(250, 204, 21, 0.05)",
+      border: "rgba(250, 204, 21, 0.6)",
+      shadow: "0 0 40px rgba(250, 204, 21, 0.3)",
+      gradient: "from-yellow-400/30 to-amber-600/30",
+      textGradient: "linear-gradient(135deg, #FEF08A 20%, #F59E0B 80%)",
+      textShadow: "drop-shadow(0 4px 16px rgba(250, 204, 21, 0.7))",
+      labelColor: "text-yellow-400/90",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-8 h-8 text-yellow-400 drop-shadow-md">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l4 3 5-6 5 6 4-3v10H3V6z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 20h18" />
+        </svg>
+      ),
+      animateClass: "animate-neon-pulse"
+    };
+  } else if (numericRank === 2) {
+    rankConfig = {
+      bg: "rgba(148, 163, 184, 0.05)",
+      border: "rgba(148, 163, 184, 0.4)",
+      shadow: "0 0 24px rgba(148, 163, 184, 0.2)",
+      gradient: "from-slate-300/20 to-slate-500/20",
+      textGradient: "linear-gradient(135deg, #F8FAFC 20%, #94A3B8 80%)",
+      textShadow: "drop-shadow(0 2px 10px rgba(148, 163, 184, 0.5))",
+      labelColor: "text-slate-300/90",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-7 h-7 text-slate-300 drop-shadow-md">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 21h8M12 17v4M7 4h10M5 4a2 2 0 00-2 2v2a6 6 0 006 6h6a6 6 0 006-6V6a2 2 0 00-2-2" />
+        </svg>
+      ),
+      animateClass: ""
+    };
+  } else if (numericRank === 3) {
+    rankConfig = {
+      bg: "rgba(180, 83, 9, 0.05)",
+      border: "rgba(180, 83, 9, 0.4)",
+      shadow: "0 0 24px rgba(180, 83, 9, 0.2)",
+      gradient: "from-orange-400/20 to-amber-700/20",
+      textGradient: "linear-gradient(135deg, #FDBA74 20%, #B45309 80%)",
+      textShadow: "drop-shadow(0 2px 10px rgba(180, 83, 9, 0.5))",
+      labelColor: "text-orange-300/90",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-7 h-7 text-orange-400 drop-shadow-md">
+          <circle cx="12" cy="14" r="4" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 10.5V3l-3 2-2-1 1 6.5M14 10.5V3l3 2 2-1-1 6.5" />
+        </svg>
+      ),
+      animateClass: ""
+    };
   }
 
   const joinDate = member.createdAt.toLocaleDateString("th-TH", {
@@ -145,7 +211,7 @@ export default async function MemberDashboardPage() {
   }));
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#08080F" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "#0A0A14" }}>
       {/* Fixed background layers */}
       <div className="page-bg" />
       <div className="page-dot-grid" />
@@ -155,241 +221,195 @@ export default async function MemberDashboardPage() {
         avatarUrl={member.user?.image}
         inGameName={member.inGameName}
         role={member.role}
+        points={points.total}
+        maxPoints={points.earned < 50000 ? 50000 : points.earned}
       />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 py-8 space-y-6 relative z-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-28 pb-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 auto-rows-auto gap-6">
 
-        {/* ── Welcome Banner ─────────────────────────────────── */}
-        <div
-          className="relative p-6 sm:p-10 rounded-3xl border overflow-hidden premium-glass-panel"
-        >
-          {/* Pink top accent */}
-          <div
-            className="absolute top-0 left-0 right-0 h-[2px]"
-            style={{
-              background: "linear-gradient(90deg, transparent 0%, rgba(255,45,120,0.8) 40%, rgba(192,132,252,0.8) 70%, transparent 100%)",
-              boxShadow: "0 0 15px rgba(255, 45, 120, 0.5)",
-            }}
-          />
-
-          {/* Premium Ambient Glow */}
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-fuchsia-600/20 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-cyan-600/10 rounded-full blur-[80px] pointer-events-none" />
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-2 min-w-0">
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <span
-                  className="px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-widest uppercase border"
-                  style={{
-                    background:
-                      member.memberType === "WAR"
-                        ? "rgba(239, 68, 68, 0.1)"
-                        : "rgba(16, 185, 129, 0.1)",
-                    borderColor:
-                      member.memberType === "WAR"
-                        ? "rgba(239, 68, 68, 0.3)"
-                        : "rgba(16, 185, 129, 0.3)",
-                    color: member.memberType === "WAR" ? "#F87171" : "#34D399",
-                    fontFamily: "var(--font-noto)",
-                  }}
-                >
-                  {member.memberType === "WAR" ? "สายวอร์" : "สมาชิกปกติ"}
-                </span>
-
-                <span className="text-[11px] text-slate-600 font-mono">
-                  เข้าร่วม {joinDate}
-                </span>
-              </div>
-
-              <h1
-                className="text-2xl sm:text-3xl font-extrabold text-slate-100 truncate"
-                style={{ fontFamily: "var(--font-noto)" }}
-              >
-                {member.inGameName}
-              </h1>
-
-              <p className="text-sm text-slate-500" style={{ fontFamily: "var(--font-noto)" }}>
-                ชื่อเล่น:{" "}
-                <span
-                  style={{
-                    background: "linear-gradient(90deg, #FF6B9D, #C084FC)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    fontWeight: 700,
-                  }}
-                >
-                  {member.nickname}
-                </span>
-                {" "}·{" "}
-                <span className="text-purple-400 font-mono">{member.role}</span>
-              </p>
-            </div>
-
-            {/* Rank Badge */}
+          {/* ── Welcome Banner (Spans full width) ──────────────── */}
+          <div className="lg:col-span-12 animate-fade-scale-in" style={{ animationDelay: '0ms' }}>
             <div
-              className="flex-shrink-0 px-8 py-6 rounded-2xl border flex flex-col items-center justify-center relative overflow-hidden group transition-all duration-300"
+              className="relative p-6 sm:p-8 rounded-3xl border overflow-hidden transition-all duration-500 hover:shadow-[0_8px_32px_rgba(192,132,252,0.15)]"
               style={{
-                background: "linear-gradient(145deg, rgba(30, 30, 45, 0.7), rgba(15, 15, 25, 0.9))",
-                borderColor: "rgba(192, 132, 252, 0.3)",
-                minWidth: "140px",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)",
+                background: "linear-gradient(145deg, rgba(20,15,30,0.7) 0%, rgba(10,5,15,0.9) 100%)",
+                borderColor: "rgba(192, 132, 252, 0.25)",
+                backdropFilter: "blur(32px)",
               }}
             >
-              {/* Inner animated glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              <span className="text-[11px] text-purple-300/70 uppercase tracking-[0.2em] mb-2 font-semibold relative z-10">อันดับ</span>
-              <span
-                className="text-4xl font-black font-mono relative z-10"
+              {/* Purple top accent */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[2px]"
                 style={{
-                  background: "linear-gradient(135deg, #FFFFFF 0%, #E8B4F8 50%, #C084FC 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 4px 8px rgba(192, 132, 252, 0.25))",
+                  background: "linear-gradient(90deg, transparent 0%, rgba(192,132,252,0.8) 40%, rgba(6,182,212,0.6) 70%, transparent 100%)",
+                  boxShadow: "0 0 20px rgba(192,132,252,0.4)"
                 }}
-              >
-                {rank}
-              </span>
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 items-center">
+                {/* ── Left: Profile Info ── */}
+                <div className="space-y-4 min-w-0 md:col-span-1">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span
+                      className="px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-widest uppercase border"
+                      style={{
+                        background:
+                          member.memberType === "WAR"
+                            ? "rgba(239, 68, 68, 0.15)"
+                            : "rgba(16, 185, 129, 0.15)",
+                        borderColor:
+                          member.memberType === "WAR"
+                            ? "rgba(239, 68, 68, 0.4)"
+                            : "rgba(16, 185, 129, 0.4)",
+                        color: member.memberType === "WAR" ? "#FCA5A5" : "#6EE7B7",
+                        fontFamily: "var(--font-noto)",
+                      }}
+                    >
+                      {member.memberType === "WAR" ? "สายวอร์" : "สมาชิกปกติ"}
+                    </span>
+
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      เข้าร่วม {joinDate}
+                    </span>
+                  </div>
+
+                  <h1
+                    className="text-3xl sm:text-4xl font-extrabold text-white truncate drop-shadow-md tracking-tight"
+                    style={{ fontFamily: "var(--font-noto)" }}
+                  >
+                    {member.inGameName}
+                  </h1>
+
+                  <div className="flex flex-col gap-1 text-sm text-slate-400" style={{ fontFamily: "var(--font-noto)" }}>
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-500">ชื่อเล่น</span>
+                      <span
+                        style={{
+                          background: "linear-gradient(90deg, #FF9EBB, #D8B4FE)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {member.nickname}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-500">ตำแหน่ง</span>
+                      <span className="text-cyan-300 font-mono font-bold tracking-wide">{member.role}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Middle: Progress Stats ── */}
+                <div className="flex flex-col justify-center space-y-5 md:col-span-1 border-y md:border-y-0 md:border-x border-white/5 py-6 md:py-2 md:px-8">
+                  {/* Quest Progress */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-300 font-medium" style={{ fontFamily: "var(--font-noto)" }}>ความสำเร็จเควสต์</span>
+                      <span className="text-emerald-400 font-mono font-bold">{questSuccessRate}%</span>
+                    </div>
+                    <div className="w-full bg-black/40 rounded-full h-1.5 border border-white/5">
+                      <div className="bg-gradient-to-r from-emerald-500 to-emerald-300 h-1.5 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.5)] transition-all duration-1000" style={{ width: `${questSuccessRate}%` }} />
+                    </div>
+                  </div>
+
+                  {/* War Progress (if applicable) */}
+                  {member.memberType === "WAR" && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-300 font-medium" style={{ fontFamily: "var(--font-noto)" }}>การเข้าร่วมวอร์</span>
+                        <span className="text-purple-400 font-mono font-bold">{warAttendanceRate}%</span>
+                      </div>
+                      <div className="w-full bg-black/40 rounded-full h-1.5 border border-white/5">
+                        <div className="bg-gradient-to-r from-purple-500 to-purple-300 h-1.5 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)] transition-all duration-1000" style={{ width: `${warAttendanceRate}%` }} />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Leave Days */}
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <span className="text-slate-400 font-medium" style={{ fontFamily: "var(--font-noto)" }}>ใช้วันพักกิจกรรมไปแล้ว</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-amber-400 font-mono font-bold text-sm">{approvedLeaves}</span>
+                      <span className="text-slate-500 font-mono">วัน</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Right: Rank Badge ── */}
+                <div className="flex justify-center md:justify-end md:col-span-1">
+                  <div
+                    className={`flex-shrink-0 px-8 py-6 rounded-2xl border flex flex-col items-center justify-center relative overflow-hidden group ${rankConfig.animateClass} w-full sm:w-auto`}
+                    style={{
+                      background: rankConfig.bg,
+                      borderColor: rankConfig.border,
+                      minWidth: "160px",
+                      boxShadow: rankConfig.shadow,
+                    }}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${rankConfig.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                    
+                    {rankConfig.icon && (
+                      <div className="absolute top-3 right-3 z-10 animate-bounce" style={{ animationDuration: '2s' }}>
+                        {rankConfig.icon}
+                      </div>
+                    )}
+
+                    <span className={`text-[10px] ${rankConfig.labelColor} uppercase tracking-widest mb-1.5 relative z-10 font-bold`}>อันดับปัจจุบัน</span>
+                    <span
+                      className="text-5xl font-black font-mono relative z-10 transition-transform duration-300 group-hover:scale-110"
+                      style={{
+                        background: rankConfig.textGradient,
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        filter: rankConfig.textShadow
+                      }}
+                    >
+                      {rank}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* ── Stats Grid ──────────────────────────────────────── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {/* Points */}
-          <StatCard
-            label="แต้มคงเหลือ"
-            value={points.total.toLocaleString()}
-            unit="Pts"
-            sub={`สะสมทั้งหมด ${points.earned.toLocaleString()} Pts`}
-            accentColor="#06B6D4"
-            icon={
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-            }
-          />
-
-          {/* Quest rate */}
-          <StatCard
-            label="อัตราส่งเควสต์"
-            value={`${questSuccessRate}%`}
-            unit=""
-            sub={`สำเร็จ ${doneQuests} ครั้ง`}
-            accentColor="#10B981"
-            icon={
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-            }
-          />
-
-          {/* War attendance */}
-          <StatCard
-            label="เข้าร่วมวอร์"
-            value={`${warAttendanceRate}%`}
-            unit=""
-            sub={`เข้าร่วม ${attendedWars} ครั้ง`}
-            accentColor="#8B5CF6"
-            icon={
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
-              </svg>
-            }
-          />
-
-          {/* Leaves */}
-          <StatCard
-            label="พักกิจกรรม"
-            value={approvedLeaves.toString()}
-            unit="วัน"
-            sub="ได้รับอนุมัติในซีซัน"
-            accentColor="#FACC15"
-            icon={
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-              </svg>
-            }
-          />
-        </div>
-
-        {/* ── Discord Test ─────────────────────────────────────── */}
-        <DiscordTestButton />
-
-        {/* ── Quest Calendar ───────────────────────────────────── */}
-        {currentSeason ? (
-          <QuestCalendar
-            monthYear={currentSeason.monthYear}
-            questLogs={questLogs}
-            leaveRequests={leaveRequests}
-          />
-        ) : (
-          <div
-            className="p-10 text-center rounded-2xl border text-slate-500 text-sm"
-            style={{
-              background: "rgba(10, 10, 18, 0.4)",
-              borderColor: "rgba(255, 255, 255, 0.05)",
-              fontFamily: "var(--font-noto)",
-            }}
-          >
-            ไม่มีซีซันกิจกรรมกิลด์ที่กำลังเปิดใช้งานในขณะนี้
+          {/* ── Quest Calendar (Left Column, Spans 8) ──────────── */}
+          <div className="lg:col-span-8 h-full animate-fade-scale-in" style={{ animationDelay: '100ms' }}>
+            {currentSeason ? (
+              <QuestCalendar
+                monthYear={currentSeason.monthYear}
+                questLogs={questLogs}
+                leaveRequests={leaveRequests}
+              />
+            ) : (
+              <div
+                className="p-10 text-center rounded-3xl border text-slate-500 text-sm h-full flex items-center justify-center"
+                style={{
+                  background: "rgba(10, 10, 18, 0.4)",
+                  borderColor: "rgba(255, 255, 255, 0.05)",
+                  fontFamily: "var(--font-noto)",
+                }}
+              >
+                ไม่มีซีซันกิจกรรมกิลด์ที่กำลังเปิดใช้งานในขณะนี้
+              </div>
+            )}
           </div>
-        )}
 
-        {/* ── History Panels ───────────────────────────────────── */}
-        <HistoryPanels
-          leaveRequests={serialisedLeaveRequests}
-          recentRedeems={serialisedRedeems}
-        />
+          {/* ── Right Column Sidebar (History, Spans 4) ────────── */}
+          <div className="lg:col-span-4 flex flex-col gap-6 animate-fade-scale-in" style={{ animationDelay: '200ms' }}>
+            {/* ── History Panels ───────────────────────────────────── */}
+            <HistoryPanels
+              leaveRequests={serialisedLeaveRequests}
+              recentRedeems={serialisedRedeems}
+            />
+          </div>
+
+        </div>
       </main>
     </div>
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────── */
-/*  Sub-components rendered server-side but kept in same file for simplicity   */
-/* ──────────────────────────────────────────────────────────────────────────── */
-
-function StatCard({
-  label,
-  value,
-  unit,
-  sub,
-  accentColor,
-  icon,
-}: {
-  label: string;
-  value: string;
-  unit: string;
-  sub: string;
-  accentColor: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div
-      className="stat-card"
-      style={{ "--accent" : accentColor } as React.CSSProperties}
-    >
-      {/* Icon row */}
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] uppercase tracking-widest font-semibold text-slate-500" style={{ fontFamily: "var(--font-noto)" }}>
-          {label}
-        </span>
-        <span style={{ color: accentColor, opacity: 0.7 }}>{icon}</span>
-      </div>
-
-      {/* Value */}
-      <div className="font-mono font-extrabold text-xl sm:text-2xl" style={{ color: accentColor }}>
-        {value}
-        {unit && <span className="text-xs font-normal text-slate-500 ml-1">{unit}</span>}
-      </div>
-
-      {/* Sub label */}
-      <div className="text-[10px] text-slate-600 mt-1 font-mono">{sub}</div>
-    </div>
-  );
-}
-
-/* History panels — client-rendered to support "View All" modal */
 import HistoryPanels from "./HistoryPanels";

@@ -146,11 +146,10 @@ export default function QuestCalendar({
 
   return (
     <div
-      className="p-6 rounded-3xl border backdrop-blur-md space-y-6"
+      className="p-6 rounded-3xl border backdrop-blur-xl space-y-6 transition-all duration-500 hover:shadow-[0_8px_32px_rgba(192,132,252,0.15)] h-full flex flex-col"
       style={{
-        background: "rgba(255, 255, 255, 0.02)",
-        borderColor: "rgba(255, 45, 120, 0.15)",
-        boxShadow: "0 4px 20px rgba(255, 45, 120, 0.03)",
+        background: "linear-gradient(145deg, rgba(20,15,30,0.6) 0%, rgba(10,5,15,0.8) 100%)",
+        borderColor: "rgba(192, 132, 252, 0.25)",
       }}
     >
       {/* Calendar Header */}
@@ -183,9 +182,9 @@ export default function QuestCalendar({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch flex-1">
         {/* The Grid */}
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 flex flex-col justify-center">
           {/* Weekday headers */}
           <div className="grid grid-cols-7 gap-1.5 text-center mb-2">
             {WEEKDAYS_TH.map((wd, i) => (
@@ -245,10 +244,10 @@ export default function QuestCalendar({
 
         {/* Hover Info Card */}
         <div
-          className="p-5 rounded-2xl border flex flex-col justify-center h-full min-h-[160px] md:min-h-0"
+          className="p-5 rounded-2xl border flex flex-col justify-center h-full min-h-[160px] md:min-h-0 transition-all duration-300"
           style={{
-            background: "rgba(255, 255, 255, 0.01)",
-            borderColor: "rgba(255, 255, 255, 0.04)",
+            background: "linear-gradient(145deg, rgba(192,132,252,0.05) 0%, rgba(6,182,212,0.05) 100%)",
+            borderColor: "rgba(192, 132, 252, 0.15)",
           }}
         >
           {hoveredDay ? (

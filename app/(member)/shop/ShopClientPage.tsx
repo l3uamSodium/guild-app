@@ -329,7 +329,8 @@ function ShopCard({
 
   return (
     <div
-      className={`rounded-2xl border overflow-hidden flex flex-col transition-all duration-300 ${disabled ? "" : "card-hover-glow"} ${disabled ? "" : isLucky ? "card-hover-glow-purple" : ""}`}
+      onClick={() => !disabled && onRedeem(item)}
+      className={`rounded-2xl border overflow-hidden flex flex-col transition-all duration-300 ${disabled ? "" : "card-hover-glow cursor-pointer"} ${disabled ? "" : isLucky ? "card-hover-glow-purple" : ""}`}
       style={{
         background: "rgba(10, 10, 20, 0.55)",
         borderColor: isLucky ? `${accentAlpha}0.12)` : "rgba(255,255,255,0.06)",
@@ -570,6 +571,8 @@ export default function ShopClientPage({
         avatarUrl={memberInfo.avatarUrl}
         inGameName={memberInfo.inGameName}
         role={memberInfo.role}
+        points={pointsBalance}
+        maxPoints={earnedPoints < 50000 ? 50000 : earnedPoints}
       />
 
       {/* Toast */}
@@ -592,7 +595,7 @@ export default function ShopClientPage({
         />
       )}
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 py-8 space-y-6 relative z-10">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 pt-28 pb-8 space-y-6 relative z-10">
 
         {/* ── Header ──────────────────────────────────────────── */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">

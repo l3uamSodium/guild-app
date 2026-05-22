@@ -21,6 +21,8 @@ interface LeaveClientPageProps {
     inGameName: string;
     role: string;
     avatarUrl: string | null;
+    points?: number;
+    maxPoints?: number;
   };
 }
 
@@ -44,6 +46,14 @@ export default function LeaveClientPage({
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const dd = String(today.getDate()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd}`;
+  };
+
+  // คำนวณวันสูงสุดสำหรับ max attribute (ให้เลือกได้แค่ในเดือนของซีซั่นปัจจุบัน)
+  const getMaxDateString = () => {
+    if (!currentSeasonMonthYear) return undefined;
+    const [year, month] = currentSeasonMonthYear.split("-");
+    const lastDay = new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
+    return `${year}-${month.padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
   };
 
   const showNotification = (type: "success" | "error", message: string) => {
@@ -164,10 +174,12 @@ export default function LeaveClientPage({
         avatarUrl={memberInfo.avatarUrl}
         inGameName={memberInfo.inGameName}
         role={memberInfo.role}
+        points={memberInfo.points}
+        maxPoints={memberInfo.maxPoints}
       />
 
       <main
-        className="flex-1 relative overflow-hidden px-4 py-12 md:px-8"
+        className="flex-1 relative overflow-hidden px-4 pt-28 pb-12 md:px-8"
       >
         {/* Background gradients */}
       <div
@@ -239,21 +251,6 @@ export default function LeaveClientPage({
               แจ้งขอพักกิจกรรมกิลด์หรือเควสต์ประจำวันล่วงหน้า
             </p>
           </div>
-
-          <Link
-            href="/dashboard"
-            className="px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 hover:brightness-110 flex items-center gap-2 self-start md:self-auto"
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              borderColor: "rgba(228,228,240,0.15)",
-              color: "#E4E4F0",
-            }}
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            แดชบอร์ด
-          </Link>
         </div>
 
         {/* Content Body */}
@@ -298,6 +295,7 @@ export default function LeaveClientPage({
                   <input
                     type="date"
                     min={getTodayDateString()}
+                    max={getMaxDateString()}
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     disabled={isPending || !hasActiveSeason}

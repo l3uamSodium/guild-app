@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface LeaveItem {
   id: string;
@@ -25,13 +26,13 @@ interface HistoryPanelsProps {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    PENDING:   { label: "รอตรวจสอบ",  color: "#FDE047", bg: "rgba(250,204,21,0.12)",  border: "rgba(250,204,21,0.3)"  },
-    APPROVED:  { label: "อนุมัติ",     color: "#34D399", bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.3)"  },
-    REJECTED:  { label: "ไม่อนุมัติ", color: "#F87171", bg: "rgba(239,68,68,0.12)",  border: "rgba(239,68,68,0.3)"   },
-    DELIVERED: { label: "จัดส่งแล้ว", color: "#34D399", bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.3)"  },
-    PENDING_DELIVERY: { label: "รอจัดส่ง", color: "#E4E4F0", bg: "rgba(228,228,240,0.1)", border: "rgba(228,228,240,0.2)" },
+    PENDING:   { label: "รอตรวจสอบ",  color: "#FACC15", bg: "rgba(250,204,21,0.08)",  border: "rgba(250,204,21,0.2)"  },
+    APPROVED:  { label: "อนุมัติ",     color: "#10B981", bg: "rgba(16,185,129,0.08)", border: "rgba(16,185,129,0.2)"  },
+    REJECTED:  { label: "ไม่อนุมัติ", color: "#EF4444", bg: "rgba(239,68,68,0.08)",  border: "rgba(239,68,68,0.2)"   },
+    DELIVERED: { label: "จัดส่งแล้ว", color: "#10B981", bg: "rgba(16,185,129,0.08)", border: "rgba(16,185,129,0.2)"  },
+    PENDING_DELIVERY: { label: "รอจัดส่ง", color: "#E4E4F0", bg: "rgba(228,228,240,0.05)", border: "rgba(228,228,240,0.12)" },
   };
-  const cfg = map[status] ?? { label: status, color: "#A8A8C8", bg: "rgba(136,136,168,0.1)", border: "rgba(136,136,168,0.2)" };
+  const cfg = map[status] ?? { label: status, color: "#8888A8", bg: "rgba(136,136,168,0.08)", border: "rgba(136,136,168,0.2)" };
   return (
     <span
       className="px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide border whitespace-nowrap flex-shrink-0"
@@ -59,8 +60,8 @@ function fmtDate(iso: string) {
 function LeaveRow({ item }: { item: LeaveItem }) {
   return (
     <div
-      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl border transition-all duration-300 hover:bg-white/[0.04] hover:-translate-y-0.5 hover:shadow-lg group"
-      style={{ background: "rgba(255,255,255,0.02)", borderColor: "rgba(255,255,255,0.06)", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl border transition-all duration-200 hover:bg-white/[0.015]"
+      style={{ background: "rgba(255,255,255,0.01)", borderColor: "rgba(255,255,255,0.04)" }}
     >
       <div className="min-w-0">
         <div className="text-xs font-semibold text-slate-300" style={{ fontFamily: "var(--font-noto)" }}>
@@ -79,8 +80,8 @@ function LeaveRow({ item }: { item: LeaveItem }) {
 function RedeemRow({ item }: { item: RedeemItem }) {
   return (
     <div
-      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl border transition-all duration-300 hover:bg-white/[0.04] hover:-translate-y-0.5 hover:shadow-lg group"
-      style={{ background: "rgba(255,255,255,0.02)", borderColor: "rgba(255,255,255,0.06)", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl border transition-all duration-200 hover:bg-white/[0.015]"
+      style={{ background: "rgba(255,255,255,0.01)", borderColor: "rgba(255,255,255,0.04)" }}
     >
       <div className="min-w-0">
         <div className="text-xs font-semibold text-slate-300 truncate" style={{ fontFamily: "var(--font-noto)" }}>
@@ -105,7 +106,10 @@ function ViewAllModal({
   onClose: () => void;
   children: React.ReactNode;
 }) {
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     // Lock body scroll
     const originalStyle = window.getComputedStyle(document.body).overflow;
     document.body.style.overflow = "hidden";
@@ -114,14 +118,17 @@ function ViewAllModal({
     };
   }, []);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
         {/* Modal top accent */}
         <div
-          className="h-[1px] w-full"
+          className="h-[2px] w-full"
           style={{
-            background: "linear-gradient(90deg, transparent, rgba(255,45,120,0.6), rgba(192,132,252,0.4), transparent)",
+            background: "linear-gradient(90deg, transparent, rgba(192,132,252,0.6), rgba(6,182,212,0.4), transparent)",
+            boxShadow: "0 0 16px rgba(192,132,252,0.3)"
           }}
         />
 
@@ -148,7 +155,8 @@ function ViewAllModal({
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -170,13 +178,19 @@ function PanelCard({
 }) {
   return (
     <div
-      className="flex flex-col rounded-2xl border overflow-hidden premium-glass-panel"
+      className="flex flex-col rounded-3xl border overflow-hidden transition-all duration-500 hover:shadow-[0_8px_32px_rgba(192,132,252,0.15)]"
+      style={{
+        background: "linear-gradient(145deg, rgba(20,15,30,0.6) 0%, rgba(10,5,15,0.8) 100%)",
+        borderColor: "rgba(192, 132, 252, 0.25)",
+        backdropFilter: "blur(32px)",
+      }}
     >
       {/* Panel top accent */}
       <div
-        className="h-[1px] w-full"
+        className="h-[2px] w-full"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(192,132,252,0.6), rgba(6,182,212,0.4), transparent)",
+          boxShadow: "0 0 16px rgba(192,132,252,0.3)"
         }}
       />
 
@@ -228,8 +242,8 @@ export default function HistoryPanels({ leaveRequests, recentRedeems }: HistoryP
 
   return (
     <>
-      {/* Panels grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* Panels flex container */}
+      <div className="flex flex-col gap-6">
         {/* Leave history */}
         <PanelCard
           title="ประวัติการขอพักกิจกรรม"

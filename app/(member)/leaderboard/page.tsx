@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { getLeaderboard } from "@/lib/leaderboard";
+import { getMemberPoints } from "@/lib/points";
+import { getCurrentSeason } from "@/lib/season";
 import LeaderboardClientPage from "./LeaderboardClientPage";
 
 export const metadata = {
@@ -72,6 +74,9 @@ export default async function LeaderboardPage({ searchParams }: LeaderboardPageP
     isOpen: s.isOpen,
   }));
 
+  const currentSeason = await getCurrentSeason();
+  const points = await getMemberPoints(memberId, currentSeason?.id);
+
   return (
     <LeaderboardClientPage
       seasons={mappedSeasons}
@@ -82,6 +87,8 @@ export default async function LeaderboardPage({ searchParams }: LeaderboardPageP
         inGameName: member.inGameName,
         role: member.role,
         avatarUrl: member.user?.image,
+        points: points.total,
+        maxPoints: points.earned < 50000 ? 50000 : points.earned,
       }}
     />
   );

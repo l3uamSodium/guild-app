@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/rbac";
 import { getCurrentSeason } from "@/lib/season";
+import { getMemberPoints } from "@/lib/points";
 import { redirect } from "next/navigation";
 import LeaveClientPage from "./LeaveClientPage";
 
@@ -59,6 +60,8 @@ export default async function MemberLeavePage() {
     }));
   }
 
+  const points = await getMemberPoints(memberId, currentSeason?.id);
+
   return (
     <LeaveClientPage
       initialHistory={history}
@@ -68,6 +71,8 @@ export default async function MemberLeavePage() {
         inGameName: member.inGameName,
         role: member.role,
         avatarUrl: member.user?.image,
+        points: points.total,
+        maxPoints: points.earned < 50000 ? 50000 : points.earned,
       }}
     />
   );
