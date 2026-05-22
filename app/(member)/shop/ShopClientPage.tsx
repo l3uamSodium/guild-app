@@ -390,28 +390,36 @@ function ShopCard({
 
         {/* Badges */}
         {isLucky && (
-          <span
-            className="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase z-10"
+          <div
+            className="absolute top-3 left-3 px-3 py-1 rounded-lg z-10 flex items-center justify-center"
             style={{
-              background: "rgba(192,132,252,0.9)",
-              color: "#FFF",
-              boxShadow: "0 2px 10px rgba(192,132,252,0.4)",
-              fontFamily: "var(--font-noto)",
+              background: "linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(126, 34, 206, 0.95))",
+              border: "1px solid rgba(233, 213, 255, 0.4)",
+              boxShadow: "0 4px 12px rgba(147, 51, 234, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)",
+              backdropFilter: "blur(8px)",
             }}
           >
-            ลุ้นรางวัล
-          </span>
+            <span
+              className="text-[10px] font-bold tracking-widest uppercase text-white drop-shadow-md"
+              style={{ fontFamily: "var(--font-noto)" }}
+            >
+              ลุ้นรางวัล
+            </span>
+          </div>
         )}
-        <span
-          className="absolute top-3 right-3 px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold z-10"
+        <div
+          className="absolute top-3 right-3 px-2.5 py-1 rounded-lg z-10 flex items-center justify-center"
           style={{
-            background: outOfStock ? "rgba(239,68,68,0.9)" : "rgba(0,0,0,0.6)",
-            color: "#FFF",
-            backdropFilter: "blur(8px)",
+            background: outOfStock ? "rgba(220, 38, 38, 0.85)" : "rgba(15, 23, 42, 0.75)",
+            border: outOfStock ? "1px solid rgba(252, 165, 165, 0.3)" : "1px solid rgba(255, 255, 255, 0.2)",
+            backdropFilter: "blur(12px)",
+            boxShadow: outOfStock ? "0 4px 12px rgba(220, 38, 38, 0.3)" : "0 4px 12px rgba(0, 0, 0, 0.4)",
           }}
         >
-          {outOfStock ? "หมด" : `x${item.stock}`}
-        </span>
+          <span className="text-[11px] font-mono font-bold text-white drop-shadow-sm">
+            {outOfStock ? "หมด" : `x${item.stock}`}
+          </span>
+        </div>
       </div>
 
       {/* Content */}
