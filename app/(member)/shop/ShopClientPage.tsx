@@ -652,21 +652,30 @@ export default function ShopClientPage({
         </div>
 
         {/* ── Filter Bar ──────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in" style={{ animationDelay: '100ms' }}>
+        <div 
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-2.5 rounded-2xl animate-fade-in" 
+          style={{ 
+            animationDelay: '100ms',
+            background: "rgba(255, 255, 255, 0.02)",
+            border: "1px solid rgba(255, 255, 255, 0.05)",
+            backdropFilter: "blur(12px)",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)"
+          }}
+        >
           {/* Tabs */}
-          <div className="flex gap-1.5">
+          <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className="px-3.5 py-2 rounded-xl text-[11px] font-semibold transition-all duration-200 border"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 whitespace-nowrap"
                   style={{
                     fontFamily: "var(--font-noto)",
-                    background: isActive ? "rgba(192,132,252,0.1)" : "transparent",
-                    borderColor: isActive ? "rgba(192,132,252,0.3)" : "transparent",
-                    color: isActive ? "#C084FC" : "#4B4B6A",
+                    background: isActive ? "rgba(192,132,252,0.15)" : "transparent",
+                    color: isActive ? "#C084FC" : "#64748B",
+                    textShadow: isActive ? "0 0 10px rgba(192,132,252,0.3)" : "none",
                   }}
                 >
                   {tab.label}
@@ -682,12 +691,18 @@ export default function ShopClientPage({
               placeholder="ค้นหาของรางวัล..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="input-dark w-full pl-9 pr-4 py-2"
-              style={{ fontFamily: "var(--font-noto)" }}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm transition-all focus:outline-none placeholder:text-slate-500"
+              style={{ 
+                fontFamily: "var(--font-noto)",
+                background: "rgba(0, 0, 0, 0.3)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                color: "#E2E8F0",
+                boxShadow: "inset 0 2px 4px rgba(0,0,0,0.2)"
+              }}
             />
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-              style={{ color: "#4B4B6A" }}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4"
+              style={{ color: "#64748B" }}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
