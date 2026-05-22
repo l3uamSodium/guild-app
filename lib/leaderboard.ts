@@ -117,7 +117,7 @@ export async function getLeaderboard(
       earned += 50000;
     }
 
-    const totalPoints = earned - pointsSpent;
+    const totalPoints = earned; // Leaderboard ranks by total cumulative points, independent of shop spending
 
     return {
       memberId: m.id,
