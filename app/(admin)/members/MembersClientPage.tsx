@@ -145,7 +145,7 @@ export default function MembersClientPage({
       {/* Notification Toast */}
       {notification && (
         <div
-          className="fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl border backdrop-filter backdrop-blur-lg flex items-center gap-3 shadow-2xl transition-all duration-300 animate-slide-in"
+          className="fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl border backdrop-filter backdrop-blur-lg flex items-center gap-3 shadow-2xl transition-all duration-300 "
           style={{
             background: notification.type === "success" ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.15)",
             borderColor: notification.type === "success" ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.3)",
@@ -437,7 +437,7 @@ export default function MembersClientPage({
                               fontFamily: "var(--font-noto)"
                             }}
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D78] animate-pulse" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D78] " />
                             สายวอ
                           </span>
                         ) : (

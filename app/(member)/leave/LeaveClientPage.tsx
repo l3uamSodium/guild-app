@@ -208,7 +208,7 @@ export default function LeaveClientPage({
       {/* Notification Toast */}
       {notification && (
         <div
-          className="fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl border backdrop-filter backdrop-blur-lg flex items-center gap-3 shadow-2xl transition-all duration-300 animate-slide-in"
+          className="fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl border backdrop-filter backdrop-blur-lg flex items-center gap-3 shadow-2xl transition-all duration-300 "
           style={{
             background: notification.type === "success" ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.15)",
             borderColor: notification.type === "success" ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.3)",
@@ -232,7 +232,7 @@ export default function LeaveClientPage({
       {/* Wrapper */}
       <div className="relative z-10 max-w-7xl w-full mx-auto space-y-6">
         {/* Header */}
-        <div className="animate-fade-in flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ animationDelay: '0ms' }}>
+        <div className=" flex flex-col md:flex-row md:items-center justify-between gap-6" >
           <div className="space-y-1">
             <h1
               className="text-3xl sm:text-4xl font-extrabold truncate tracking-tight"
@@ -256,7 +256,7 @@ export default function LeaveClientPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 auto-rows-auto gap-6">
           {/* Submit Leave Form (Left Column) */}
           <div
-            className="lg:col-span-5 p-8 rounded-3xl overflow-hidden relative flex flex-col justify-between animate-fade-in"
+            className="lg:col-span-5 p-8 rounded-3xl overflow-hidden relative flex flex-col justify-between "
             style={{
               animationDelay: '100ms',
               background: "rgba(26, 26, 36, 0.4)",
@@ -342,7 +342,7 @@ export default function LeaveClientPage({
           </div>
 
           {/* History of Leave Requests (Right Column) */}
-          <div className="lg:col-span-7 flex flex-col gap-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <div className="lg:col-span-7 flex flex-col gap-6 " >
             <div className="flex items-center gap-3 px-1">
               <div className="w-1.5 h-5 rounded-full bg-gradient-to-b from-pink-400 to-rose-600" />
               <h3 className="text-base font-bold text-white tracking-wide" style={{ fontFamily: "var(--font-noto)" }}>

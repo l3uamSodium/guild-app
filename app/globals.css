@@ -430,3 +430,6 @@ button, a, [role="button"] {
     box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.08);
   }
 }
+
+html.do-intro-animation body { animation: globalSlideUpIntro 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes globalSlideUpIntro { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }

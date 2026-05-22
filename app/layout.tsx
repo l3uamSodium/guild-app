@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className={`${cinzel.variable} ${notoSansThai.variable} h-full`}>
+    <html lang="th" className={`${cinzel.variable} ${notoSansThai.variable} h-full`} suppressHydrationWarning>
       <body
         className="min-h-full flex flex-col antialiased"
         style={{
@@ -40,6 +40,12 @@ export default function RootLayout({
           color: "#E4E4F0",
         }}
       >
+        <script dangerouslySetInnerHTML={{ __html: `
+          if (!sessionStorage.getItem('hasPlayedIntro')) {
+            document.documentElement.classList.add('do-intro-animation');
+            sessionStorage.setItem('hasPlayedIntro', 'true');
+          }
+        `}} />
         <Providers>{children}</Providers>
       </body>
     </html>
