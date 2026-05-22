@@ -330,16 +330,19 @@ function ShopCard({
   return (
     <div
       onClick={() => !disabled && onRedeem(item)}
-      className={`rounded-3xl overflow-hidden flex flex-col relative transition-all duration-300 ${disabled ? "" : "cursor-pointer hover:-translate-y-1 hover:shadow-2xl z-10"}`}
+      className={`rounded-[2rem] overflow-hidden flex flex-col relative transition-all duration-500 group ${disabled ? "" : "cursor-pointer hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-10"}`}
       style={{
-        background: "rgba(20, 20, 30, 0.4)",
+        background: "rgba(20, 20, 30, 0.6)",
         border: "1px solid",
-        borderColor: isLucky ? `${accentAlpha}0.25)` : "rgba(255, 255, 255, 0.06)",
-        backdropFilter: "blur(20px)",
-        ...(isLucky && !disabled ? { boxShadow: `0 8px 32px rgba(0,0,0,0.4), 0 0 20px ${accentAlpha}0.1)` } : {}),
+        borderColor: isLucky ? `${accentAlpha}0.3)` : "rgba(255, 255, 255, 0.08)",
+        backdropFilter: "blur(24px)",
+        ...(isLucky && !disabled ? { boxShadow: `0 8px 32px rgba(0,0,0,0.4), inset 0 0 20px ${accentAlpha}0.05)` } : {}),
         ...(disabled ? { filter: "grayscale(0.6) brightness(0.7)", opacity: 0.7, pointerEvents: "none" } : {}),
       }}
     >
+      {/* Glossy shine effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-30" />
+
       {/* Top accent for Lucky Draw */}
       {isLucky && (
         <div
@@ -353,15 +356,15 @@ function ShopCard({
       
       {/* Image area */}
       <div
-        className="h-48 relative flex items-center justify-center overflow-hidden"
-        style={{ background: "rgba(0,0,0,0.3)" }}
+        className="h-56 relative flex items-center justify-center overflow-hidden"
+        style={{ background: "rgba(0,0,0,0.4)" }}
       >
         {item.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={item.imageUrl}
             alt={item.name}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
           <div className="flex flex-col items-center gap-2">
@@ -504,7 +507,6 @@ function ShopCard({
   );
 }
 
-/* ─── Main Page ───────────────────────────────────────────── */
 export default function ShopClientPage({
   shopItems,
   pointsBalance,
@@ -513,7 +515,6 @@ export default function ShopClientPage({
   memberInfo,
 }: ShopClientPageProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"ALL" | "NORMAL" | "LUCKY_DRAW">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [redeemingId, setRedeemingId] = useState<string | null>(null);
   const [confirmItem, setConfirmItem] = useState<ShopItemData | null>(null);
@@ -558,24 +559,31 @@ export default function ShopClientPage({
     }
   };
 
-  const filteredItems = shopItems.filter((item) => {
-    const matchesTab = activeTab === "ALL" || item.type === activeTab;
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesTab && matchesSearch;
-  });
+  const isSearching = searchQuery.trim().length > 0;
+  
+  const searchedItems = isSearching 
+    ? shopItems.filter((item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : [];
 
-  const tabs = [
-    { id: "ALL", label: "ทั้งหมด" },
-    { id: "NORMAL", label: "ของรางวัลทั่วไป" },
-    { id: "LUCKY_DRAW", label: "ลุ้นจับรางวัล" },
-  ];
+  const luckyItems = shopItems.filter(item => item.type === "LUCKY_DRAW");
+  const normalItems = shopItems.filter(item => item.type === "NORMAL");
+
+  // Determine Featured Item (First active Lucky Draw, or just the first item)
+  const featuredItem = luckyItems.find(item => item.stock > 0 && (!item.drawClosesAt || new Date(item.drawClosesAt).getTime() > Date.now())) || shopItems[0];
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#08080F" }}>
-      <div className="page-bg" />
-      <div className="page-dot-grid" />
+    <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: "#06060A" }}>
+      {/* Background Layers */}
+      <div className="page-bg opacity-50" />
+      <div className="page-dot-grid opacity-30" />
+      
+      {/* Ambient Glows */}
+      <div className="absolute top-0 left-1/4 w-[50vw] h-[50vw] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-1/4 right-0 w-[40vw] h-[40vw] bg-cyan-600/10 rounded-full blur-[100px] pointer-events-none translate-x-1/4" />
+      <div className="absolute top-1/2 left-0 w-[30vw] h-[30vw] bg-pink-600/10 rounded-full blur-[100px] pointer-events-none -translate-x-1/2" />
 
       <MemberNavbar
         avatarUrl={memberInfo.avatarUrl}
@@ -605,73 +613,55 @@ export default function ShopClientPage({
         />
       )}
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 pt-28 pb-8 space-y-6 relative z-10">
-
-        {/* ── Header ──────────────────────────────────────────── */}
-        <div className="flex flex-col gap-2 animate-fade-scale-in" style={{ animationDelay: '0ms' }}>
-          <h1
-            style={{
-              fontFamily: "var(--font-cinzel)",
-              fontSize: "clamp(28px, 5vw, 42px)",
-              fontWeight: 900,
-              letterSpacing: "0.15em",
-              background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              textTransform: "uppercase",
-              textShadow: "0 4px 20px rgba(192,132,252,0.2)"
-            }}
-          >
-            GUILD SHOP
-          </h1>
-          <p
-            style={{
-              fontFamily: "var(--font-noto)",
-              color: "#94A3B8",
-              fontSize: "15px",
-            }}
-          >
-            ใช้แต้มกิลด์แลกของรางวัลพรีเมียมหรือสิทธิ์ลุ้นรับรางวัลใหญ่ประจำซีซัน
-          </p>
-        </div>
-
-        {/* ── Filter Bar ──────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-scale-in" style={{ animationDelay: '100ms' }}>
-          {/* Tabs */}
-          <div className="flex gap-1.5">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className="px-3.5 py-2 rounded-xl text-[11px] font-semibold transition-all duration-200 border"
-                  style={{
-                    fontFamily: "var(--font-noto)",
-                    background: isActive ? "rgba(192,132,252,0.1)" : "transparent",
-                    borderColor: isActive ? "rgba(192,132,252,0.3)" : "transparent",
-                    color: isActive ? "#C084FC" : "#4B4B6A",
-                  }}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-28 pb-16 space-y-10 relative z-10">
+        
+        {/* ── Header & Search ──────────────────────────────────────────── */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 animate-fade-in" style={{ animationDelay: '0ms' }}>
+          <div>
+            <h1
+              style={{
+                fontFamily: "var(--font-cinzel)",
+                fontSize: "clamp(32px, 5vw, 48px)",
+                fontWeight: 900,
+                letterSpacing: "0.15em",
+                background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textTransform: "uppercase",
+                textShadow: "0 4px 30px rgba(192,132,252,0.25)"
+              }}
+            >
+              GUILD SHOP
+            </h1>
+            <p
+              style={{
+                fontFamily: "var(--font-noto)",
+                color: "#94A3B8",
+                fontSize: "15px",
+                marginTop: "4px"
+              }}
+            >
+              แลกของรางวัลพรีเมียมและลุ้นรับไอเทมสุดพิเศษประจำซีซัน
+            </p>
           </div>
 
-          {/* Search */}
-          <div className="relative sm:w-72">
+          <div className="relative md:w-80 w-full shrink-0">
             <input
               type="text"
-              placeholder="ค้นหาของรางวัล..."
+              placeholder="ค้นหาไอเทม..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="input-dark w-full pl-9 pr-4 py-2"
-              style={{ fontFamily: "var(--font-noto)" }}
+              className="w-full pl-11 pr-4 py-3 rounded-2xl border text-sm text-white placeholder-slate-500 transition-all focus:border-purple-400 focus:shadow-[0_0_20px_rgba(192,132,252,0.15)]"
+              style={{ 
+                fontFamily: "var(--font-noto)",
+                background: "rgba(255,255,255,0.03)",
+                borderColor: "rgba(255,255,255,0.08)",
+                backdropFilter: "blur(12px)"
+              }}
             />
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-              style={{ color: "#4B4B6A" }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5"
+              style={{ color: "#64748B" }}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -682,29 +672,152 @@ export default function ShopClientPage({
           </div>
         </div>
 
-        {/* ── Grid ────────────────────────────────────────────── */}
-        <div className="animate-fade-scale-in" style={{ animationDelay: '200ms' }}>
-          {filteredItems.length === 0 ? (
-            <div
-              className="p-16 text-center text-slate-400 rounded-3xl premium-glass-panel"
-              style={{ fontFamily: "var(--font-noto)" }}
-            >
-              ไม่พบของรางวัลในหมวดหมู่นี้
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {filteredItems.map((item) => (
-                <ShopCard
-                  key={item.id}
-                  item={item}
-                  pointsBalance={pointsBalance}
-                  onRedeem={(item) => setConfirmItem(item)}
-                  isRedeeming={redeemingId === item.id}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        {isSearching ? (
+          /* ── Search Results View ──────────────────────────────────────── */
+          <div className="space-y-6 animate-fade-in">
+            <h2 className="text-xl font-bold text-slate-200" style={{ fontFamily: "var(--font-noto)" }}>
+              ผลการค้นหา "{searchQuery}"
+            </h2>
+            {searchedItems.length === 0 ? (
+              <div
+                className="p-16 text-center text-slate-500 rounded-3xl"
+                style={{ fontFamily: "var(--font-noto)", border: "1px dashed rgba(255,255,255,0.1)" }}
+              >
+                ไม่พบไอเทมที่ค้นหา
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {searchedItems.map((item) => (
+                  <ShopCard
+                    key={item.id}
+                    item={item}
+                    pointsBalance={pointsBalance}
+                    onRedeem={(item) => setConfirmItem(item)}
+                    isRedeeming={redeemingId === item.id}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          /* ── Storefront View ──────────────────────────────────────────── */
+          <div className="space-y-12">
+            
+            {/* Featured Hero Banner */}
+            {featuredItem && (
+              <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
+                <div 
+                  className="relative rounded-[2.5rem] overflow-hidden border group"
+                  style={{ 
+                    borderColor: featuredItem.type === "LUCKY_DRAW" ? "rgba(192,132,252,0.3)" : "rgba(255,255,255,0.1)",
+                    background: "rgba(10,10,15,0.8)"
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent z-10" />
+                  
+                  {/* Background Image Bleed */}
+                  {featuredItem.imageUrl && (
+                    <div 
+                      className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 group-hover:scale-105 transition-transform duration-1000"
+                      style={{ backgroundImage: `url(${featuredItem.imageUrl})` }}
+                    />
+                  )}
+
+                  <div className="relative z-20 flex flex-col md:flex-row items-center p-8 md:p-12 gap-8 min-h-[360px]">
+                    <div className="flex-1 space-y-5">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-bold uppercase tracking-wider"
+                        style={{
+                          background: featuredItem.type === "LUCKY_DRAW" ? "rgba(192,132,252,0.15)" : "rgba(6,182,212,0.15)",
+                          borderColor: featuredItem.type === "LUCKY_DRAW" ? "rgba(192,132,252,0.3)" : "rgba(6,182,212,0.3)",
+                          color: featuredItem.type === "LUCKY_DRAW" ? "#D8B4FE" : "#67E8F9"
+                        }}
+                      >
+                        <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: featuredItem.type === "LUCKY_DRAW" ? "#C084FC" : "#06B6D4" }} />
+                        {featuredItem.type === "LUCKY_DRAW" ? "Featured Draw" : "Featured Item"}
+                      </div>
+                      
+                      <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-xl" style={{ fontFamily: "var(--font-noto)" }}>
+                        {featuredItem.name}
+                      </h2>
+                      
+                      <p className="text-slate-300 max-w-xl text-sm md:text-base leading-relaxed" style={{ fontFamily: "var(--font-noto)" }}>
+                        {featuredItem.description || "รางวัลพิเศษสุดพรีเมียมที่คุณไม่ควรพลาด แลกด่วนก่อนของจะหมด!"}
+                      </p>
+
+                      <div className="pt-4 flex items-center gap-6">
+                        <div className="text-3xl font-black font-mono" style={{ color: featuredItem.type === "LUCKY_DRAW" ? "#C084FC" : "#06B6D4" }}>
+                          {featuredItem.price.toLocaleString()} <span className="text-sm font-semibold text-slate-400">Pts</span>
+                        </div>
+                        <button
+                          onClick={() => setConfirmItem(featuredItem)}
+                          disabled={featuredItem.stock <= 0 || (featuredItem.type === "LUCKY_DRAW" && featuredItem.drawClosesAt && new Date(featuredItem.drawClosesAt).getTime() < Date.now())}
+                          className="px-8 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(192,132,252,0.3)] disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
+                          style={{
+                            fontFamily: "var(--font-noto)",
+                            background: featuredItem.type === "LUCKY_DRAW" ? "linear-gradient(135deg, #A855F7, #7E22CE)" : "linear-gradient(135deg, #06B6D4, #0369A1)",
+                            color: "#FFF"
+                          }}
+                        >
+                          แลกรางวัลเลย
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Lucky Draws Section */}
+            {luckyItems.length > 0 && (
+              <div className="space-y-5 animate-fade-in" style={{ animationDelay: '200ms' }}>
+                <div className="flex items-center gap-3">
+                  <h3 className="text-2xl font-bold text-white flex items-center gap-2" style={{ fontFamily: "var(--font-noto)" }}>
+                    <span className="text-purple-400">✨</span> ลุ้นรางวัลพิเศษ
+                  </h3>
+                  <div className="h-px flex-1 bg-gradient-to-r from-purple-500/20 to-transparent ml-4" />
+                </div>
+                
+                <div className="flex gap-6 overflow-x-auto pb-6 pt-2 snap-x [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {luckyItems.map((item) => (
+                    <div key={item.id} className="min-w-[280px] sm:min-w-[320px] max-w-[320px] snap-start shrink-0">
+                      <ShopCard
+                        item={item}
+                        pointsBalance={pointsBalance}
+                        onRedeem={(item) => setConfirmItem(item)}
+                        isRedeeming={redeemingId === item.id}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Normal Items Section */}
+            {normalItems.length > 0 && (
+              <div className="space-y-5 animate-fade-in" style={{ animationDelay: '300ms' }}>
+                <div className="flex items-center gap-3">
+                  <h3 className="text-2xl font-bold text-white flex items-center gap-2" style={{ fontFamily: "var(--font-noto)" }}>
+                    <span className="text-pink-400">🛍️</span> ของรางวัลทั่วไป
+                  </h3>
+                  <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent ml-4" />
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-2">
+                  {normalItems.map((item) => (
+                    <ShopCard
+                      key={item.id}
+                      item={item}
+                      pointsBalance={pointsBalance}
+                      onRedeem={(item) => setConfirmItem(item)}
+                      isRedeeming={redeemingId === item.id}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            
+          </div>
+        )}
       </main>
     </div>
   );

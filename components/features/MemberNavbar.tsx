@@ -97,21 +97,16 @@ export default function MemberNavbar({
           {/* Right side */}
           <div className="flex items-center gap-3 flex-shrink-0">
             {/* Points Display */}
-            <div 
-              className="hidden lg:flex items-center gap-2 px-4 py-1.5 rounded-full border transition-all duration-300 hover:shadow-[0_0_16px_rgba(6,182,212,0.25)] hover:-translate-y-0.5"
-              style={{
-                background: "linear-gradient(90deg, rgba(6,182,212,0.1), rgba(6,182,212,0.02))",
-                borderColor: "rgba(6, 182, 212, 0.3)",
-              }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 text-cyan-400 drop-shadow-md">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-              <div className="font-mono text-xs tracking-wide">
-                <span className="font-bold text-cyan-300 drop-shadow-md">{points.toLocaleString()}</span>
-                <span className="text-cyan-500/50 mx-1.5">/</span>
-                <span className="text-cyan-400/80 font-medium">{maxPoints.toLocaleString()}</span>
-              </div>
+            <div className="hidden lg:flex items-baseline gap-1.5 px-2 cursor-default">
+              <span className="text-cyan-400 font-bold font-mono text-sm tracking-wide">
+                {points.toLocaleString()}
+              </span>
+              <span className="text-slate-500 font-medium font-mono text-xs">
+                / {maxPoints.toLocaleString()}
+              </span>
+              <span className="text-slate-600 text-[10px] uppercase font-bold tracking-wider ml-0.5">
+                Pts
+              </span>
             </div>
 
             {(role === "GUILD_MASTER" || role === "VICE_MASTER") && (

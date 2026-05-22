@@ -191,7 +191,7 @@ export default function LeaderboardClientPage({
         <div className="relative z-10 max-w-5xl mx-auto space-y-6">
 
           {/* ── Header ──────────────────────────────────────── */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 animate-fade-scale-in" style={{ animationDelay: '0ms' }}>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 animate-fade-in" style={{ animationDelay: '0ms' }}>
             <div>
               <h1
                 style={{
@@ -249,7 +249,7 @@ export default function LeaderboardClientPage({
 
           {/* ── Filter Controls ──────────────────────────────── */}
           <div
-            className="p-6 rounded-3xl border backdrop-blur-md flex flex-col md:flex-row md:items-center gap-5 animate-fade-scale-in transition-all duration-500 hover:shadow-[0_8px_32px_rgba(192,132,252,0.1)]"
+            className="p-6 rounded-3xl border backdrop-blur-md flex flex-col md:flex-row md:items-center gap-5 animate-fade-in transition-all duration-500 hover:shadow-[0_8px_32px_rgba(192,132,252,0.1)]"
             style={{
               background: "linear-gradient(145deg, rgba(20,15,30,0.6) 0%, rgba(10,5,15,0.8) 100%)",
               borderColor: "rgba(192, 132, 252, 0.2)",
@@ -312,7 +312,7 @@ export default function LeaderboardClientPage({
 
           {/* ── Table ────────────────────────────────────────── */}
           <div
-            className="rounded-3xl border overflow-hidden backdrop-blur-md animate-fade-scale-in relative transition-all duration-500 hover:shadow-[0_8px_32px_rgba(6,182,212,0.1)]"
+            className="rounded-3xl border overflow-hidden backdrop-blur-md animate-fade-in relative transition-all duration-500 hover:shadow-[0_8px_32px_rgba(6,182,212,0.1)]"
             style={{
               background: "linear-gradient(145deg, rgba(20,15,30,0.6) 0%, rgba(10,5,15,0.8) 100%)",
               borderColor: "rgba(6, 182, 212, 0.2)",
@@ -486,7 +486,7 @@ export default function LeaderboardClientPage({
           {/* ── Sticky self card (when out of top 10) ──────────── */}
           {!isCurrentUserInTop10 && currentUserEntry && (
              <div
-             className="sticky bottom-8 p-5 rounded-3xl border backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 animate-fade-scale-in"
+             className="sticky bottom-8 p-5 rounded-3xl border backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 animate-fade-in"
              style={{
                background: "linear-gradient(145deg, rgba(8, 8, 16, 0.95) 0%, rgba(15, 20, 30, 0.95) 100%)",
                borderColor: "rgba(34,211,238,0.4)",

@@ -229,7 +229,7 @@ export default async function MemberDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 auto-rows-auto gap-6">
 
           {/* ── Welcome Banner (Spans full width) ──────────────── */}
-          <div className="lg:col-span-12 animate-fade-scale-in" style={{ animationDelay: '0ms' }}>
+          <div className="lg:col-span-12 animate-fade-in" style={{ animationDelay: '0ms' }}>
             <div
               className="relative p-6 sm:p-8 rounded-3xl border overflow-hidden transition-all duration-500 hover:shadow-[0_8px_32px_rgba(192,132,252,0.15)]"
               style={{
@@ -376,7 +376,7 @@ export default async function MemberDashboardPage() {
           </div>
 
           {/* ── Quest Calendar (Left Column, Spans 8) ──────────── */}
-          <div className="lg:col-span-8 h-full animate-fade-scale-in" style={{ animationDelay: '100ms' }}>
+          <div className="lg:col-span-8 h-full animate-fade-in" style={{ animationDelay: '100ms' }}>
             {currentSeason ? (
               <QuestCalendar
                 monthYear={currentSeason.monthYear}
@@ -398,7 +398,7 @@ export default async function MemberDashboardPage() {
           </div>
 
           {/* ── Right Column Sidebar (History, Spans 4) ────────── */}
-          <div className="lg:col-span-4 flex flex-col gap-6 animate-fade-scale-in" style={{ animationDelay: '200ms' }}>
+          <div className="lg:col-span-4 flex flex-col gap-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
             {/* ── History Panels ───────────────────────────────────── */}
             <HistoryPanels
               leaveRequests={serialisedLeaveRequests}

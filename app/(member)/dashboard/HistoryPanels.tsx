@@ -182,7 +182,6 @@ function PanelCard({
       style={{
         background: "linear-gradient(145deg, rgba(20,15,30,0.6) 0%, rgba(10,5,15,0.8) 100%)",
         borderColor: "rgba(192, 132, 252, 0.25)",
-        backdropFilter: "blur(32px)",
       }}
     >
       {/* Panel top accent */}
