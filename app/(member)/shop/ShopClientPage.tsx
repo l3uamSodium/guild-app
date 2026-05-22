@@ -330,21 +330,21 @@ function ShopCard({
   return (
     <div
       onClick={() => !disabled && onRedeem(item)}
-      className={`group rounded-3xl overflow-hidden flex flex-col relative transition-all duration-500 ${disabled ? "" : "cursor-pointer hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-10"}`}
+      className={`rounded-3xl overflow-hidden flex flex-col relative transition-all duration-500 ${disabled ? "" : "cursor-pointer hover:-translate-y-2 z-10 group"}`}
       style={{
-        background: "linear-gradient(180deg, rgba(30, 25, 40, 0.5) 0%, rgba(15, 10, 20, 0.8) 100%)",
+        background: isLucky 
+          ? "linear-gradient(145deg, rgba(192, 132, 252, 0.08) 0%, rgba(20, 15, 30, 0.6) 100%)" 
+          : "linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(20, 20, 30, 0.6) 100%)",
         border: "1px solid",
-        borderColor: isLucky ? `${accentAlpha}0.3)` : "rgba(255, 255, 255, 0.08)",
-        backdropFilter: "blur(16px)",
-        ...(isLucky && !disabled ? { boxShadow: `0 8px 32px rgba(0,0,0,0.4), inset 0 0 20px ${accentAlpha}0.05)` } : {}),
+        borderColor: isLucky ? `${accentAlpha}0.35)` : "rgba(255, 255, 255, 0.12)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        boxShadow: isLucky && !disabled 
+          ? `0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 24px ${accentAlpha}0.2)` 
+          : "0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
         ...(disabled ? { filter: "grayscale(0.6) brightness(0.7)", opacity: 0.7, pointerEvents: "none" } : {}),
       }}
     >
-      {/* Holographic Shine */}
-      {!disabled && (
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-[150%] -translate-x-[150%] transition-all duration-[1500ms] pointer-events-none z-30 skew-x-12 scale-150" />
-      )}
-
       {/* Top accent for Lucky Draw */}
       {isLucky && (
         <div
@@ -359,15 +359,18 @@ function ShopCard({
       {/* Image area */}
       <div
         className="h-48 relative flex items-center justify-center overflow-hidden"
-        style={{ background: "rgba(0,0,0,0.3)" }}
+        style={{ background: "rgba(0,0,0,0.4)" }}
       >
         {item.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={item.imageUrl}
-            alt={item.name}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-          />
+          <>
+            <img
+              src={item.imageUrl}
+              alt={item.name}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            {/* Gradient overlay to blend into card */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[rgba(20,20,30,0.8)] via-transparent to-transparent opacity-90" />
+          </>
         ) : (
           <div className="flex flex-col items-center gap-2">
             <div
@@ -577,18 +580,10 @@ export default function ShopClientPage({
     { id: "LUCKY_DRAW", label: "ลุ้นจับรางวัล" },
   ];
 
-  const featuredItem = shopItems.find(item => item.type === "LUCKY_DRAW" && item.imageUrl && item.stock > 0) || shopItems.find(item => item.imageUrl) || shopItems[0];
-  const luckyItems = filteredItems.filter(item => item.type === "LUCKY_DRAW");
-  const normalItems = filteredItems.filter(item => item.type === "NORMAL");
-
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: "#08080F" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "#08080F" }}>
       <div className="page-bg" />
       <div className="page-dot-grid" />
-      
-      {/* Ambient Glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-purple-600/20 blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-pink-600/10 blur-[150px] pointer-events-none" />
 
       <MemberNavbar
         avatarUrl={memberInfo.avatarUrl}
@@ -621,31 +616,39 @@ export default function ShopClientPage({
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-8 pt-28 pb-8 space-y-6 relative z-10">
 
         {/* ── Header ──────────────────────────────────────────── */}
-        <div className="flex flex-col gap-2 animate-fade-in" style={{ animationDelay: '0ms' }}>
-          <h1
-            style={{
-              fontFamily: "var(--font-cinzel)",
-              fontSize: "clamp(28px, 5vw, 42px)",
-              fontWeight: 900,
-              letterSpacing: "0.15em",
-              background: "linear-gradient(135deg, #FFFFFF 20%, #C084FC 80%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              textTransform: "uppercase",
-              textShadow: "0 4px 20px rgba(192,132,252,0.2)"
-            }}
-          >
-            GUILD SHOP
-          </h1>
-          <p
-            style={{
-              fontFamily: "var(--font-noto)",
-              color: "#94A3B8",
-              fontSize: "15px",
-            }}
-          >
-            ใช้แต้มกิลด์แลกของรางวัลพรีเมียมหรือสิทธิ์ลุ้นรับรางวัลใหญ่ประจำซีซัน
-          </p>
+        <div className="relative animate-fade-in" style={{ animationDelay: '0ms' }}>
+          {/* Glowing Orbs Behind Header */}
+          <div className="absolute -top-12 -left-12 w-72 h-72 bg-purple-600/20 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute top-0 left-32 w-48 h-48 bg-cyan-500/15 rounded-full blur-[60px] pointer-events-none" />
+
+          <div className="flex flex-col gap-3 relative z-10">
+            <h1
+              style={{
+                fontFamily: "var(--font-cinzel)",
+                fontSize: "clamp(32px, 6vw, 48px)",
+                fontWeight: 900,
+                letterSpacing: "0.15em",
+                background: "linear-gradient(135deg, #FFFFFF 20%, #D8B4FE 80%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textTransform: "uppercase",
+                textShadow: "0 4px 30px rgba(192,132,252,0.3)"
+              }}
+            >
+              GUILD SHOP
+            </h1>
+            <p
+              style={{
+                fontFamily: "var(--font-noto)",
+                color: "#94A3B8",
+                fontSize: "15px",
+                maxWidth: "600px",
+                lineHeight: "1.6"
+              }}
+            >
+              ใช้แต้มกิลด์แลกของรางวัลพรีเมียมหรือสิทธิ์ลุ้นรับรางวัลใหญ่ประจำซีซัน
+            </p>
+          </div>
         </div>
 
         {/* ── Filter Bar ──────────────────────────────────────── */}
@@ -695,127 +698,29 @@ export default function ShopClientPage({
           </div>
         </div>
 
-        {/* ── Featured Hero Banner ──────────────────────────────────────────── */}
-        {activeTab === "ALL" && !searchQuery && featuredItem && (
-          <div className="animate-fade-in mb-8" style={{ animationDelay: '50ms' }}>
+        {/* ── Grid ────────────────────────────────────────────── */}
+        <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+          {filteredItems.length === 0 ? (
             <div
-              className="relative rounded-[2rem] overflow-hidden border flex flex-col md:flex-row items-center gap-8 p-8 md:p-12 transition-all duration-500 group"
-              style={{
-                background: "linear-gradient(135deg, rgba(20, 15, 30, 0.8) 0%, rgba(10, 5, 15, 0.95) 100%)",
-                borderColor: "rgba(192, 132, 252, 0.3)",
-                boxShadow: "0 10px 40px rgba(192,132,252,0.15)",
-                backdropFilter: "blur(24px)",
-              }}
+              className="p-16 text-center text-slate-400 rounded-3xl premium-glass-panel"
+              style={{ fontFamily: "var(--font-noto)" }}
             >
-              {/* Glow Accent */}
-              <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 blur-[100px] rounded-full pointer-events-none" />
-
-              <div className="flex-1 space-y-6 relative z-10 w-full">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-300 text-[11px] font-bold uppercase tracking-widest" style={{ fontFamily: "var(--font-noto)" }}>
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-                  </span>
-                  ไอเทมแนะนำ
-                </div>
-                
-                <h2 className="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-lg" style={{ fontFamily: "var(--font-noto)" }}>
-                  {featuredItem.name}
-                </h2>
-                
-                <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl" style={{ fontFamily: "var(--font-noto)" }}>
-                  {featuredItem.description || "ของรางวัลสุดพิเศษที่คุณไม่ควรพลาด ใช้แต้มกิลด์แลกได้เลยทันที!"}
-                </p>
-
-                <div className="flex flex-wrap items-center gap-6 pt-2">
-                  <button
-                    onClick={() => setConfirmItem(featuredItem)}
-                    className="px-8 py-4 rounded-2xl font-bold text-sm text-white transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-[0_0_20px_rgba(192,132,252,0.4)]"
-                    style={{
-                      background: "linear-gradient(135deg, #A855F7, #EC4899)",
-                      fontFamily: "var(--font-noto)",
-                    }}
-                  >
-                    แลกรางวัลนี้
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                  </button>
-                  <div className="flex flex-col">
-                    <span className="text-slate-500 text-[11px] uppercase tracking-widest font-bold" style={{ fontFamily: "var(--font-noto)" }}>ราคา</span>
-                    <span className="text-2xl font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                      {featuredItem.price.toLocaleString()} <span className="text-sm font-medium text-slate-400">Pts</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="w-full md:w-2/5 relative z-10 group-hover:-translate-y-2 transition-transform duration-500">
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative bg-black/50">
-                   {featuredItem.imageUrl ? (
-                     // eslint-disable-next-line @next/next/no-img-element
-                     <img src={featuredItem.imageUrl} alt={featuredItem.name} className="w-full h-full object-cover" />
-                   ) : (
-                     <div className="absolute inset-0 flex items-center justify-center">
-                       <svg className="w-16 h-16 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                     </div>
-                   )}
-                   {/* Inner glass overlay */}
-                   <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-transparent pointer-events-none" />
-                </div>
-              </div>
+              ไม่พบของรางวัลในหมวดหมู่นี้
             </div>
-          </div>
-        )}
-
-        {/* ── Content Sections ────────────────────────────────────────────── */}
-        {activeTab === "ALL" && !searchQuery ? (
-          <div className="space-y-12">
-            {luckyItems.length > 0 && (
-              <div className="space-y-6 animate-fade-in" style={{ animationDelay: '150ms' }}>
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl drop-shadow-md">✨</span>
-                  <h2 className="text-xl font-extrabold text-white drop-shadow-md tracking-wide" style={{ fontFamily: "var(--font-noto)" }}>ลุ้นรางวัลสุดพิเศษ</h2>
-                  <div className="h-px flex-1 bg-gradient-to-r from-purple-500/30 to-transparent ml-4" />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {luckyItems.map((item) => (
-                    <ShopCard key={item.id} item={item} pointsBalance={pointsBalance} onRedeem={setConfirmItem} isRedeeming={redeemingId === item.id} />
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {normalItems.length > 0 && (
-              <div className="space-y-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl drop-shadow-md">🛍️</span>
-                  <h2 className="text-xl font-extrabold text-white drop-shadow-md tracking-wide" style={{ fontFamily: "var(--font-noto)" }}>ของรางวัลทั่วไป</h2>
-                  <div className="h-px flex-1 bg-gradient-to-r from-pink-500/30 to-transparent ml-4" />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {normalItems.map((item) => (
-                    <ShopCard key={item.id} item={item} pointsBalance={pointsBalance} onRedeem={setConfirmItem} isRedeeming={redeemingId === item.id} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="animate-fade-in" style={{ animationDelay: '150ms' }}>
-            {filteredItems.length === 0 ? (
-              <div className="p-16 text-center text-slate-400 rounded-3xl" style={{ fontFamily: "var(--font-noto)", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                ไม่พบของรางวัลในหมวดหมู่นี้
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {filteredItems.map((item) => (
-                  <ShopCard key={item.id} item={item} pointsBalance={pointsBalance} onRedeem={setConfirmItem} isRedeeming={redeemingId === item.id} />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {filteredItems.map((item) => (
+                <ShopCard
+                  key={item.id}
+                  item={item}
+                  pointsBalance={pointsBalance}
+                  onRedeem={(item) => setConfirmItem(item)}
+                  isRedeeming={redeemingId === item.id}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );
