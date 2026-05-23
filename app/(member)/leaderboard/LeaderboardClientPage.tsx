@@ -200,7 +200,7 @@ export default function LeaderboardClientPage({
               <h1
                 style={{
                   fontFamily: "var(--font-cinzel)",
-                  fontSize: "clamp(24px, 5vw, 36px)",
+                  fontSize: "clamp(20px, 4vw, 28px)",
                   fontWeight: 900,
                   letterSpacing: "0.15em",
                   background: "linear-gradient(135deg, #FFFFFF 20%, #E879F9 80%)",
@@ -426,7 +426,7 @@ export default function LeaderboardClientPage({
                               </div>
                               <div>
                                 <div
-                                  className={`font-bold transition-colors group-hover:text-white ${isTop3 ? "text-lg" : "text-sm"}`}
+                                  className={`font-bold transition-colors group-hover:text-white ${isTop3 ? "text-base" : "text-[13px]"}`}
                                   style={{ fontFamily: "var(--font-noto)", color: nameColor }}
                                 >
                                   {entry.inGameName}
@@ -468,7 +468,7 @@ export default function LeaderboardClientPage({
                           {/* Points */}
                           <td className="p-4 pr-7 text-right">
                             <span
-                              className={`font-mono font-extrabold ${isTop3 ? "text-xl tracking-tight" : "text-base"}`}
+                              className={`font-mono font-extrabold ${isTop3 ? "text-lg tracking-tight" : "text-sm"}`}
                               style={{
                                 color: isSelf ? "#22D3EE" : isTop3 ? nameColor : "#E2E8F0",
                                 textShadow: isSelf ? "0 0 12px rgba(34,211,238,0.5)" : isTop3 ? `0 0 16px ${nameColor}60` : "none",
@@ -518,7 +518,7 @@ export default function LeaderboardClientPage({
                   />
                   <div>
                     <div
-                      className="font-extrabold text-base tracking-wide"
+                      className="font-extrabold text-sm tracking-wide"
                       style={{ fontFamily: "var(--font-noto)", color: "#22D3EE" }}
                     >
                       {currentUserEntry.inGameName}
@@ -538,10 +538,10 @@ export default function LeaderboardClientPage({
                   คะแนนสะสมของคุณ
                 </div>
                 <div
-                  className="text-2xl font-mono font-black mt-0.5"
+                  className="text-xl font-mono font-black mt-0.5"
                   style={{ color: "#22D3EE", textShadow: "0 0 20px rgba(34,211,238,0.5)" }}
                 >
-                  {currentUserEntry.totalPoints.toLocaleString()} <span className="text-sm font-medium text-slate-400 uppercase tracking-wider ml-1">Pts</span>
+                  {currentUserEntry.totalPoints.toLocaleString()} <span className="text-xs font-medium text-slate-400 uppercase tracking-wider ml-1">Pts</span>
                 </div>
               </div>
             </div>
