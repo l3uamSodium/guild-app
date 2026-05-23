@@ -191,8 +191,12 @@ export default function LeaderboardClientPage({
         <div className="relative z-10 max-w-5xl mx-auto space-y-6">
 
           {/* ── Header ──────────────────────────────────────── */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 " >
-            <div>
+          <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-5 animate-fade-in" style={{ animationDelay: '0ms' }}>
+            {/* Glowing Orbs Behind Header */}
+            <div className="absolute -top-12 -left-12 w-72 h-72 bg-purple-600/20 rounded-full blur-[80px] pointer-events-none" />
+            <div className="absolute top-0 left-32 w-48 h-48 bg-cyan-500/15 rounded-full blur-[60px] pointer-events-none" />
+
+            <div className="relative z-10">
               <h1
                 style={{
                   fontFamily: "var(--font-cinzel)",
@@ -215,7 +219,7 @@ export default function LeaderboardClientPage({
 
             {selectedSeason && (
               <div
-                className="px-6 py-3.5 rounded-2xl border flex-shrink-0"
+                className="relative z-10 px-6 py-3.5 rounded-2xl border flex-shrink-0"
                 style={{
                   background: "linear-gradient(145deg, rgba(20,15,30,0.5) 0%, rgba(10,5,15,0.7) 100%)",
                   borderColor: "rgba(192,132,252,0.2)",

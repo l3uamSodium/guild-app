@@ -232,16 +232,22 @@ export default function LeaveClientPage({
       {/* Wrapper */}
       <div className="relative z-10 max-w-7xl w-full mx-auto space-y-6">
         {/* Header */}
-        <div className=" flex flex-col md:flex-row md:items-center justify-between gap-6" >
-          <div className="space-y-1">
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-in">
+          {/* Glowing Orbs Behind Header */}
+          <div className="absolute -top-12 -left-12 w-72 h-72 bg-pink-500/20 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute top-0 left-32 w-48 h-48 bg-purple-500/15 rounded-full blur-[60px] pointer-events-none" />
+
+          <div className="space-y-1 relative z-10">
             <h1
-              className="text-3xl sm:text-4xl font-extrabold truncate tracking-tight"
               style={{
                 fontFamily: "var(--font-cinzel)",
-                background: "linear-gradient(135deg, #F472B6 0%, #E879F9 100%)",
+                fontSize: "clamp(28px, 5vw, 36px)",
+                fontWeight: 900,
+                letterSpacing: "0.1em",
+                background: "linear-gradient(135deg, #FFFFFF 0%, #F472B6 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                textShadow: "0 2px 10px rgba(244,114,182,0.4)"
+                filter: "drop-shadow(0 4px 20px rgba(244,114,182,0.5))",
               }}
             >
               REQUEST BREAK
@@ -250,6 +256,7 @@ export default function LeaveClientPage({
               แจ้งขอพักกิจกรรมกิลด์หรือเควสต์ประจำวันล่วงหน้า
             </p>
           </div>
+
         </div>
 
         {/* Content Body */}
